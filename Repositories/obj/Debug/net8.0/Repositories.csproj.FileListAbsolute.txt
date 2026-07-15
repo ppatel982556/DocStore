@@ -1,0 +1,15 @@
+D:\DocStore\DocStore\Repositories\bin\Debug\net8.0\Repositories.deps.json
+D:\DocStore\DocStore\Repositories\bin\Debug\net8.0\Repositories.dll
+D:\DocStore\DocStore\Repositories\bin\Debug\net8.0\Repositories.pdb
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\Repositories.csproj.AssemblyReference.cache
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\Repositories.GeneratedMSBuildEditorConfig.editorconfig
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\Repositories.AssemblyInfoInputs.cache
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\Repositories.AssemblyInfo.cs
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\Repositories.csproj.CoreCompileInputs.cache
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\Repositories.dll
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\refint\Repositories.dll
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\Repositories.pdb
+D:\DocStore\DocStore\Repositories\obj\Debug\net8.0\ref\Repositories.dll
+D:\DocStore\DocStore\temp-build-output\Repositories.deps.json
+D:\DocStore\DocStore\temp-build-output\Repositories.dll
+D:\DocStore\DocStore\temp-build-output\Repositories.pdb

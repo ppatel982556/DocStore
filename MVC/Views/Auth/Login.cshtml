@@ -1,0 +1,855 @@
+@model Repositories.Models.ViewModels.Auth.vmLogin
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Login";
+    var errorMessage = TempData["Error"] as string;
+    var successMessage = TempData["Success"] as string;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DocStore | Login</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/kendo/kendo.default-v2.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
+    <style>
+
+        :root{
+            --brand-1:#4f46e5;
+            --brand-2:#0ea5e9;
+            --brand-3:#7c3aed;
+            --ink:#1e2233;
+            --muted:#6c7486;
+            --card-radius:22px;
+        }
+
+        *{
+            box-sizing:border-box;
+        }
+
+        html,body{
+            height:100%;
+        }
+
+        body{
+            margin:0;
+            padding:0;
+            font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(255,255,255,.15), transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(255,255,255,.12), transparent 45%),
+                linear-gradient(135deg, var(--brand-1) 0%, var(--brand-3) 55%, var(--brand-2) 100%);
+            background-size:200% 200%;
+            animation:gradientShift 16s ease infinite;
+        }
+
+        @@keyframes gradientShift{
+            0%{background-position:0% 50%;}
+            50%{background-position:100% 50%;}
+            100%{background-position:0% 50%;}
+        }
+
+        .login-container{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:30px;
+        }
+
+        .login-card{
+            width:920px;
+            max-width:100%;
+            min-height:560px;
+            background:#fff;
+            border-radius:var(--card-radius);
+            box-shadow:0 25px 60px rgba(20,20,50,.35);
+            display:flex;
+            overflow:hidden;
+        }
+        .login-card{
+            transition: transform .25s ease,
+                        filter .25s ease;
+        }
+
+        .login-card.loading{
+            transform: scale(.98);
+        }
+
+        /* Left branding panel */
+        .brand-panel{
+            flex:0 0 42%;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255,255,255,.18), transparent 45%),
+                linear-gradient(160deg, var(--brand-1), var(--brand-3));
+            color:#fff;
+            padding:48px 40px;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            position:relative;
+            overflow:hidden;
+        }
+
+        .brand-panel::before{
+            content:"";
+            position:absolute;
+            width:280px;
+            height:280px;
+            border-radius:50%;
+            background:rgba(255,255,255,.08);
+            top:-120px;
+            right:-100px;
+        }
+
+        .brand-panel::after{
+            content:"";
+            position:absolute;
+            width:180px;
+            height:180px;
+            border-radius:50%;
+            background:rgba(255,255,255,.08);
+            bottom:-70px;
+            left:-60px;
+        }
+
+        .brand-logo{
+            position:relative;
+            z-index:1;
+            margin-bottom:20px;
+        }
+
+        .brand-logo-img{
+            width:220px;
+            height:auto;
+            display:block;
+            object-fit:contain;
+            filter:drop-shadow(0 8px 20px rgba(0,0,0,.18));
+        }
+
+        .brand-copy{
+            position:relative;
+            z-index:1;
+        }
+
+        .brand-copy h1{
+            font-size:28px;
+            font-weight:700;
+            line-height:1.3;
+            margin-bottom:14px;
+        }
+
+        .brand-copy p{
+            font-size:14.5px;
+            color:rgba(255,255,255,.85);
+            line-height:1.6;
+            max-width:320px;
+        }
+
+        .brand-foot{
+            font-size:12.5px;
+            color:rgba(255,255,255,.65);
+            position:relative;
+            z-index:1;
+        }
+
+        /* Right form panel */
+        .form-panel{
+            flex:1;
+            padding:52px 48px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+        }
+
+        .form-header{
+            margin-bottom:28px;
+        }
+
+        .form-header h2{
+            font-weight:700;
+            color:var(--ink);
+            margin-bottom:6px;
+            font-size:26px;
+        }
+
+        .form-header p{
+            color:var(--muted);
+            font-size:14px;
+            margin:0;
+        }
+
+        #validation-success{
+            margin-bottom:16px;
+        }
+
+        #validation-success .alert{
+            border-radius:10px;
+            font-size:13.5px;
+            padding:10px 14px;
+        }
+
+        /* Kendo overrides for a cleaner, modern look */
+        #LoginForm .k-form-field{
+            margin-bottom:18px;
+        }
+
+        #LoginForm .k-label{
+            font-weight:600;
+            font-size:13px;
+            color:var(--ink);
+            margin-bottom:6px;
+        }
+
+        #LoginForm .k-textbox,
+        #LoginForm .k-input{
+            border-radius:10px;
+            border:1.5px solid #e3e6ef;
+            padding:4px 6px;
+            transition:border-color .15s ease, box-shadow .15s ease;
+        }
+
+        #LoginForm .k-textbox:focus-within,
+        #LoginForm .k-input:focus-within{
+            border-color:var(--brand-1);
+            box-shadow:0 0 0 3px rgba(79,70,229,.12);
+        }
+
+        #LoginForm .k-form-error{
+            color:#dc3545;
+            font-size:12.5px;
+        }
+
+        .form-options{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:22px;
+        }
+
+        .forgot-link{
+            font-size:13px;
+            color:var(--brand-1);
+            text-decoration:none;
+            font-weight:600;
+        }
+
+        .forgot-link:hover{
+            text-decoration:underline;
+        }
+
+        .k-form-buttons{
+            display:flex;
+            gap:10px;
+            margin-top:6px;
+        }
+
+        #LoginForm .k-button-solid-primary{
+            flex:1;
+            background:linear-gradient(135deg, var(--brand-1), var(--brand-3));
+            border:none;
+            border-radius:10px;
+            padding:11px 18px;
+            font-weight:600;
+            font-size:14.5px;
+            box-shadow:0 8px 18px rgba(79,70,229,.3);
+            transition:transform .15s ease, box-shadow .15s ease;
+        }
+
+        #LoginForm .k-button-solid-primary:hover{
+            transform:translateY(-1px);
+            box-shadow:0 10px 22px rgba(79,70,229,.4);
+        }
+
+        #LoginForm #btnShowPassword,
+        #LoginForm #btnClear{
+            border-radius:10px;
+            border:1.5px solid #e3e6ef;
+            background:#fff;
+            font-size:13.5px;
+            font-weight:600;
+            color:var(--muted);
+        }
+
+        #LoginForm #btnShowPassword:hover,
+        #LoginForm #btnClear:hover{
+            border-color:var(--brand-1);
+            color:var(--brand-1);
+        }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            color: #6c7486;
+            opacity: 40%;
+            font-size: 18px;
+            transition: color .2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--brand-1);
+        }
+
+        .k-checkbox {
+            width: 15px !important;
+            height: 15px !important;
+        }
+
+        .k-checkbox-label {
+            font-size: 14px !important;
+            font-weight: 500;
+        }
+
+        .form-options label {
+            gap: 12px !important;
+        }
+
+        .k-input-suffix {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-right: 10px;
+        }
+
+        .k-invalid,
+        .k-invalid input,
+        .k-invalid .k-input-inner {
+
+            border-color: #dc3545 !important;
+
+        }
+
+        .k-form-error {
+
+            margin-top: 5px;
+
+            font-size: 12px;
+
+            color: #dc3545;
+
+        }
+
+        .k-valid {
+
+            border-color: #198754 !important;
+
+        }
+
+
+        @@media (max-width:768px){
+
+            .login-card{
+                flex-direction:column;
+                width:100%;
+            }
+
+            .brand-panel{
+                flex:none;
+                padding:32px 30px;
+            }
+
+            .brand-copy h1{
+                font-size:22px;
+            }
+
+            .form-panel{
+                padding:36px 30px;
+            }
+
+            .password-toggle{
+                cursor:pointer;
+                color:#6c7486;
+                transition:.2s;
+            }
+
+            .password-toggle:hover{
+                color:var(--brand-1);
+            }
+
+        }
+
+        .login-loader{
+            position: fixed;
+            inset: 0;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: rgba(30,34,51,.35);
+            backdrop-filter: blur(6px);
+
+            z-index: 99999;
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            transition: opacity .25s ease,
+                        visibility .25s ease;
+        }
+
+        .login-loader.show{
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+
+        .loader-card{
+            background:#fff;
+            border-radius:22px;
+            padding:42px 50px;
+            text-align:center;
+            box-shadow:0 25px 60px rgba(20,20,50,.35);
+            min-width:300px;
+            animation:loaderPopIn .35s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        @@keyframes loaderPopIn{
+            0%{transform:scale(.85);opacity:0;}
+            100%{transform:scale(1);opacity:1;}
+        }
+
+        .loader-logo-wrap{
+            position:relative;
+            width:92px;
+            height:92px;
+            margin:0 auto 22px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .loader-ring{
+            position:absolute;
+            inset:0;
+            border-radius:50%;
+            border:3px solid #e3e6ef;
+            border-top-color:var(--brand-1);
+            border-right-color:var(--brand-2);
+            animation:loaderSpin 1s linear infinite;
+        }
+
+        .loader-pulse{
+            position:absolute;
+            inset:0;
+            border-radius:50%;
+            background:linear-gradient(135deg, var(--brand-1), var(--brand-2));
+            opacity:.15;
+            animation:loaderPulse 1.6s ease-out infinite;
+        }
+
+        @@keyframes loaderSpin{
+            to{transform:rotate(360deg);}
+        }
+
+        @@keyframes loaderPulse{
+            0%{transform:scale(.7);opacity:.25;}
+            70%{transform:scale(1.15);opacity:0;}
+            100%{transform:scale(1.15);opacity:0;}
+        }
+
+        .loader-logo-img{
+            width:52px;
+            height:52px;
+            object-fit:contain;
+            position:relative;
+            z-index:1;
+            filter:drop-shadow(0 4px 10px rgba(79,70,229,.25));
+        }
+
+        .loader-card h5{
+            margin:0;
+            font-weight:700;
+            color:var(--ink);
+            font-size:17px;
+            letter-spacing:.2px;
+        }
+
+        .loader-card p{
+            margin-top:8px;
+            color:var(--muted);
+            font-size:13.5px;
+        }
+
+        .loader-dots span{
+            display:inline-block;
+            width:6px;
+            height:6px;
+            border-radius:50%;
+            background:var(--brand-1);
+            margin:0 3px;
+            opacity:.3;
+            animation:loaderDots 1.2s ease-in-out infinite;
+        }
+
+        .loader-dots span:nth-child(2){animation-delay:.15s;}
+        .loader-dots span:nth-child(3){animation-delay:.3s;}
+
+        @@keyframes loaderDots{
+            0%,80%,100%{opacity:.3;transform:translateY(0);}
+            40%{opacity:1;transform:translateY(-3px);}
+        }
+
+    </style>
+
+</head>
+<div id="loginLoader" class="login-loader">
+
+    <div class="loader-card">
+
+        <div class="loader-logo-wrap">
+            <div class="loader-pulse"></div>
+            <div class="loader-ring"></div>
+            <img src="~/images/logo/DocStore(Small).png" class="loader-logo-img" />
+        </div>
+
+        <h5>Signing you in</h5>
+
+        <p>Please wait while we verify your credentials
+            <span class="loader-dots"><span></span><span></span><span></span></span>
+        </p>
+
+    </div>
+
+</div>
+
+
+<body>
+
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="brand-panel">
+
+            <div class="brand-logo">
+                <img src="~/images/logo/DocStore(Main).png" class="brand-logo-img" />
+            </div>
+
+            <div class="brand-copy">
+                <h1>Your documents,<br/>organized &amp; secure.</h1>
+                <p>Sign in to access, share and manage every file your team relies on &mdash; all in one place.</p>
+            </div>
+
+            <div class="brand-foot">
+                &copy; @DateTime.Now.Year DocStore. All rights reserved.
+            </div>
+
+        </div>
+
+        <div class="form-panel">
+
+            <div class="form-header">
+                <h2>Welcome back</h2>
+                <p>Please sign in to your account to continue.</p>
+            </div>
+
+            <div id="validation-success">
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="alert alert-danger">@errorMessage</div>
+                }
+                else if (!string.IsNullOrWhiteSpace(successMessage))
+                {
+                    <div class="alert alert-success">@successMessage</div>
+                }
+            </div>
+
+            <form id="LoginForm"></form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/lib/kendo/kendo.all.min.js"></script>
+
+<script>
+
+$(function () {
+
+    const validationBox = $("#validation-success");
+
+    $("#LoginForm").kendoForm({
+
+        orientation:"vertical",
+
+        validatable: {
+
+            validateOnBlur: true,
+
+            validateOnChange: true,
+
+            validationSummary: false,
+
+            errorTemplate: "<span class='k-form-error'>#:message#</span>"
+
+        },
+
+        items:[
+
+            {
+                field: "Email",
+
+                label: "Email",
+
+                editor: function (container, options) {
+
+                    $('<input ' +
+                        'name="' + options.field + '" ' +
+                        'type="email" ' +
+                        'required ' +
+                        'data-required-msg="Email is required." ' +
+                        'data-email-msg="Please enter a valid email address." ' +
+                        'placeholder="you@company.com"/>')
+                        .appendTo(container)
+                        .kendoTextBox({
+                            prefixOptions: {
+                                icon: "envelope"
+                            }
+                        });
+
+                }
+            },
+
+            {
+                field: "Password",
+
+                label: "Password",
+
+                editor: function (container, options) {
+
+                    $(`
+                        <span class="k-textbox k-input password-wrapper">
+
+                            <input
+                                id="Password"
+                                type="password"
+                                name="${options.field}"
+                                required
+                                data-required-msg="Password is required."
+                                class="k-input-inner"
+                                placeholder="Enter your password"/>
+
+                            <span class="k-input-suffix">
+                                <i id="togglePassword"
+                                class="fa-solid fa-eye password-toggle"></i>
+                            </span>
+
+                        </span>
+                    `).appendTo(container);
+
+                }
+            },
+
+            {
+
+                field:"RememberMe",
+
+                label:"",
+
+                editor:function(container,options){
+
+                    $('<div class="form-options">'+
+    '<label class="k-checkbox-label" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#6c7486;">'+
+        '<input type="checkbox" name="'+options.field+'" class="k-checkbox"/> Remember me'+
+    '</label>'+
+    '<a href="@Url.Action("ForgotPassword","Auth")" class="forgot-link">Forgot password?</a>'+
+'</div>').appendTo(container);
+
+                }
+
+            }
+
+        ],
+
+        buttonsTemplate:
+
+            '<div class="k-form-buttons">'+
+            '<button class="k-button k-button-solid-primary" type="submit">Sign In</button>'+
+            '<button type="button" class="k-button" id="btnClear">Clear</button>'+
+            '</div>',
+
+        validateField:function(){
+
+            validationBox.empty();
+
+        },
+
+        submit:function(e){
+
+            e.preventDefault();
+
+                    const validator = $("#LoginForm")
+                .data("kendoForm")
+                .validator;
+
+            if (!validator.validate()) {
+
+                validationBox.empty();
+
+                setTimeout(function () {
+
+                    validator.hideMessages();
+
+                    $("#LoginForm")
+                        .find(".k-invalid")
+                        .removeClass("k-invalid");
+
+                    $("#LoginForm")
+                        .find("[aria-invalid='true']")
+                        .removeAttr("aria-invalid");
+
+                }, 5000);
+
+                return;
+            }
+
+            $(".login-card").addClass("loading");
+
+            $("#loginLoader").addClass("show");
+
+            $("#LoginForm")
+                .find("input,button")
+                .prop("disabled", true);
+
+            $.ajax({
+
+                url:"@Url.Action("Login","Auth")",
+
+                type:"POST",
+
+                data:e.model,
+
+                success:function(response){
+
+                    validationBox.html(
+
+                        '<div class="alert alert-success">'+
+                        response.message+
+                        '</div>'
+
+                    );
+
+                    setTimeout(function(){
+
+                        window.location=response.redirectUrl;
+
+                    },500);
+
+                    $(".login-card").removeClass("loading");
+
+                    $("#loginLoader").removeClass("show");
+
+                    $("#LoginForm")
+                        .find("input,button")
+                        .prop("disabled", false);
+
+                },
+
+                error:function(xhr){
+
+                    let message="Login failed.";
+
+                    if(xhr.responseJSON){
+
+                        message=xhr.responseJSON.message;
+
+                    }
+
+                    validationBox.html(
+
+                        '<div class="alert alert-danger">'+
+                        message+
+                        '</div>'
+
+                    );
+
+                    $(".login-card").removeClass("loading");
+
+                    $("#loginLoader").removeClass("show");
+
+                    $("#LoginForm")
+                        .find("input,button")
+                        .prop("disabled", false);
+
+                }
+
+            });
+
+        }
+
+    });
+
+    $(document).on("click","#btnClear",function(){
+
+        $("#LoginForm").data("kendoForm").clear();
+
+        validationBox.empty();
+
+    });
+
+    $(document).on("click", "#togglePassword", function () {
+
+        const input = $("#Password");
+        const icon = $(this);
+
+        if (input.attr("type") === "password") {
+
+            input.attr("type", "text");
+
+            icon.removeClass("fa-eye")
+                .addClass("fa-eye-slash");
+
+        } else {
+
+            input.attr("type", "password");
+
+            icon.removeClass("fa-eye-slash")
+                .addClass("fa-eye");
+
+        }
+
+    });
+
+    $(document).on("input", "#LoginForm input", function () {
+
+        $(this)
+            .removeClass("k-invalid")
+            .removeAttr("aria-invalid");
+
+        $(this)
+            .closest(".k-form-field")
+            .find(".k-form-error")
+            .remove();
+
+    });
+
+});
+
+</script>
+
+</body>
+
+</html>

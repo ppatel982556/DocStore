@@ -1,0 +1,952 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "DocStore";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DocStore | Secure Document Management</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --brand-1: #4f46e5;
+            --brand-2: #0ea5e9;
+            --brand-3: #7c3aed;
+            --ink: #1a1d2e;
+            --muted: #656d82;
+            --line: rgba(30,34,51,.08);
+            --shadow: 0 30px 80px rgba(23, 24, 58, .16);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --nav-progress: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html, body {
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+            background: #f5f6fb;
+            overflow-x: hidden;
+        }
+
+        /* ---------- Ambient background ---------- */
+        .bg-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 8%, rgba(255,255,255,.5), transparent 42%),
+                linear-gradient(150deg, var(--brand-1) 0%, var(--brand-3) 50%, var(--brand-2) 100%);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: .55;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,0) 70%);
+            animation: floatOrb 14s ease-in-out infinite;
+        }
+
+        .orb.o1 { width: 340px; height: 340px; top: -80px; left: -100px; animation-delay: 0s; }
+        .orb.o2 { width: 260px; height: 260px; top: 30%; right: -80px; animation-delay: 2.5s; opacity: .35; }
+        .orb.o3 { width: 200px; height: 200px; bottom: -60px; left: 18%; animation-delay: 5s; opacity: .3; }
+        .orb.o4 { width: 160px; height: 160px; top: 60%; left: 45%; animation-delay: 7.5s; opacity: .22; }
+
+        @@keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(24px, -30px) scale(1.06); }
+        }
+
+        @@keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @@keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        .reveal.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ---------- Navbar ---------- */
+        .site-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 10px 0;
+            transition: background .25s ease, box-shadow .25s ease;
+        }
+
+        .site-nav.scrolled {
+            background: rgba(255,255,255,.75);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 8px 30px rgba(23,24,58,.08);
+        }
+
+        .nav-inner {
+            width: min(1240px, 92%);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: calc(12px - (10px * var(--nav-progress))) 0;
+            min-height: calc(82px - (42px * var(--nav-progress)));
+            transition: min-height .25s ease, padding .25s ease;
+        }
+
+        .brand-mark img {
+            width: calc(165px - (85px * var(--nav-progress)));
+            max-width: 100%;
+            display: block;
+            transform-origin: left center;
+            transition: width .25s ease, transform .25s ease;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link,
+        .nav-button {
+            text-decoration: none;
+            border-radius: 999px;
+            padding:calc(11px - (5px * var(--nav-progress))) calc(20px - (8px * var(--nav-progress)));
+            font-size: calc(14px - (2px * var(--nav-progress)));
+            font-weight: 600;
+            transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link {
+            color: var(--ink);
+            background: rgba(255,255,255,.6);
+            border: 1px solid var(--line);
+        }
+
+        .nav-button {
+            color: #fff;
+            background: linear-gradient(135deg, var(--brand-1), var(--brand-3));
+            box-shadow: 0 12px 26px rgba(79,70,229,.32);
+        }
+
+        .nav-link:hover,
+        .nav-button:hover {
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        .nav-link:hover {
+            color: var(--ink);
+            border-color: rgba(79,70,229,.3);
+        }
+
+        /* ---------- Layout shell ---------- */
+        .page-shell {
+            position: relative;
+            z-index: 1;
+            width: min(1240px, 92%);
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        /* ---------- Hero ---------- */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            gap: 48px;
+            align-items: center;
+            padding: 56px 0 40px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.7);
+            border: 1px solid var(--line);
+            color: var(--brand-1);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .hero-copy h1 {
+            margin: 22px 0 18px;
+            font-size: clamp(2.6rem, 5.4vw, 4.6rem);
+            line-height: 1.04;
+            letter-spacing: -0.035em;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .hero-copy .gradient-word {
+            background: linear-gradient(120deg, #ffffff, #d9e2ff 45%, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-copy p {
+            margin: 0;
+            font-size: 17.5px;
+            line-height: 1.8;
+            color: rgba(255,255,255,.86);
+            max-width: 38rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 32px;
+        }
+
+        .hero-actions a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            border-radius: 16px;
+            padding: 15px 22px;
+            font-weight: 700;
+            font-size: 14.5px;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+
+        .hero-actions .primary-link {
+            color: var(--brand-1);
+            background: #fff;
+            box-shadow: 0 18px 38px rgba(20,20,50,.28);
+        }
+
+        .hero-actions .primary-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 22px 44px rgba(20,20,50,.34);
+        }
+
+        .hero-actions .secondary-link {
+            color: #fff;
+            background: rgba(255,255,255,.12);
+            border: 1px solid rgba(255,255,255,.35);
+        }
+
+        .hero-actions .secondary-link:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,.2);
+        }
+
+        .hero-notes {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            color: rgba(255,255,255,.82);
+            font-size: 13.5px;
+        }
+
+        .hero-notes span {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .hero-notes i {
+            color: #d9e2ff;
+        }
+
+        /* ---------- Hero visual mockup ---------- */
+        .hero-visual {
+            position: relative;
+            height: 420px;
+        }
+
+        .mock-window {
+            position: absolute;
+            width: 100%;
+            max-width: 420px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(-2deg);
+            background: #fff;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: floatCard 6s ease-in-out infinite;
+        }
+
+        @@keyframes floatCard {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-2deg); }
+            50% { transform: translate(-50%, -54%) rotate(-1deg); }
+        }
+
+        .mock-titlebar {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .mock-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e3e6ef;
+        }
+
+        .mock-dot:nth-child(1) { background: #ff6b6b; }
+        .mock-dot:nth-child(2) { background: #ffd166; }
+        .mock-dot:nth-child(3) { background: #06d6a0; }
+
+        .mock-body {
+            padding: 20px;
+        }
+
+        .mock-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background: #f7f8fc;
+            border: 1px solid var(--line);
+        }
+
+        .mock-row .file-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #fff;
+            flex: none;
+        }
+
+        .mock-row .bar {
+            height: 8px;
+            border-radius: 6px;
+            background: #e3e6ef;
+        }
+
+        .mock-row .bar.w1 { width: 70%; margin-bottom: 6px; }
+        .mock-row .bar.w2 { width: 40%; }
+
+        .float-badge {
+            position: absolute;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(20,20,50,.22);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .float-badge i {
+            color: #06d6a0;
+        }
+
+        .float-badge.b1 {
+            top: 6%;
+            right: 2%;
+            animation: floatCard 5s ease-in-out infinite;
+            animation-delay: .5s;
+        }
+
+        .float-badge.b2 {
+            bottom: 8%;
+            left: 0%;
+            animation: floatCard 7s ease-in-out infinite;
+            animation-delay: 1.2s;
+        }
+
+        /* ---------- Stats strip ---------- */
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            padding: 30px 34px;
+            background: rgba(255,255,255,.92);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-item {
+            text-align: center;
+            border-right: 1px solid var(--line);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-value {
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -.03em;
+            background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 13.5px;
+        }
+
+        /* ---------- Features ---------- */
+        .section-head {
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto 40px;
+        }
+
+        .section-head .eyebrow {
+            background: rgba(79,70,229,.08);
+            color: var(--brand-1);
+            border: none;
+        }
+
+        .section-head h2 {
+            margin: 18px 0 12px;
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -.03em;
+            color: var(--ink);
+        }
+
+        .section-head p {
+            color: var(--muted);
+            font-size: 15.5px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .features-section {
+            padding: 80px 0 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .feature-card {
+            border-radius: var(--radius-lg);
+            background: rgba(255,255,255,.92);
+            border: 1px solid var(--line);
+            padding: 28px 26px;
+            backdrop-filter: blur(8px);
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 50px rgba(23,24,58,.14);
+            border-color: rgba(79,70,229,.25);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(79,70,229,.12), rgba(14,165,233,.12));
+            color: var(--brand-1);
+            font-size: 19px;
+            margin-bottom: 18px;
+            transition: transform .25s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.08) rotate(-4deg);
+        }
+
+        .feature-card h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14.5px;
+            line-height: 1.75;
+        }
+
+        /* ---------- CTA banner ---------- */
+        .cta-banner {
+            margin: 90px 0 20px;
+            border-radius: var(--radius-xl);
+            padding: 52px 48px;
+            background: linear-gradient(135deg, rgba(34,36,86,.97), rgba(52,37,124,.97));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-banner::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -80px;
+            top: -80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.08);
+        }
+
+        .cta-copy {
+            position: relative;
+            z-index: 1;
+            max-width: 34rem;
+        }
+
+        .cta-copy h3 {
+            margin: 0 0 10px;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .cta-copy p {
+            margin: 0;
+            color: rgba(255,255,255,.8);
+            font-size: 14.5px;
+            line-height: 1.7;
+        }
+
+        .cta-banner .primary-link {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            border-radius: 16px;
+            padding: 15px 24px;
+            font-weight: 700;
+            font-size: 14.5px;
+            color: var(--brand-1);
+            background: #fff;
+            box-shadow: 0 18px 38px rgba(0,0,0,.25);
+            transition: transform .18s ease;
+            white-space: nowrap;
+        }
+
+        .cta-banner .primary-link:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ---------- Footer ---------- */
+        .site-footer {
+            position: relative;
+            z-index: 1;
+            width: min(1240px, 92%);
+            margin: 0 auto;
+            padding: 30px 4px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            color: rgba(255,255,255,.75);
+            font-size: 13px;
+        }
+
+        .site-footer .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .site-footer a {
+            color: rgba(255,255,255,.75);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .site-footer a:hover {
+            color: #fff;
+        }
+
+        @@media (max-width: 991px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                padding-top: 30px;
+            }
+
+            .hero-visual {
+                height: 340px;
+                order: -1;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-strip {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .stat-item:nth-child(2) {
+                border-right: none;
+            }
+        }
+
+        @@media (max-width: 620px) {
+            .nav-inner {
+                min-height: calc(88px - (20px * var(--nav-progress)));
+                padding: calc(14px - (6px * var(--nav-progress))) 0;
+            }
+
+            .brand-mark img {
+                width: calc(148px - (30px * var(--nav-progress)));
+            }
+
+            .nav-actions .nav-link {
+                display: none;
+            }
+
+            .cta-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-strip {
+                grid-template-columns: 1fr;
+                gap: 22px;
+            }
+
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid var(--line);
+                padding-bottom: 16px;
+            }
+
+            .stat-item:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-scene">
+        <div class="orb o1"></div>
+        <div class="orb o2"></div>
+        <div class="orb o3"></div>
+        <div class="orb o4"></div>
+    </div>
+
+    <nav class="site-nav" id="siteNav">
+        <div class="nav-inner">
+            <a class="brand-mark" asp-controller="Home" asp-action="Index" aria-label="DocStore home">
+                <img src="~/images/logo/DocStore(Main).png" alt="DocStore logo" />
+            </a>
+
+            <div class="nav-actions">
+                <a class="nav-link" asp-controller="Auth" asp-action="ForgotPassword">Forgot Password</a>
+                <a class="nav-button" asp-controller="Auth" asp-action="Login">Sign In</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-shell">
+
+        <section class="hero-grid">
+            <div class="hero-copy">
+                <span class="eyebrow">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Secure File Operations
+                </span>
+
+                <h1>One place for every document your team needs to <span class="gradient-word">find, trust, and move fast</span>.</h1>
+
+                <p>
+                    DocStore brings secure storage, streamlined access, and structured document handling into one calm workspace.
+                    Keep records organized, protect sensitive files, and give teams a cleaner way to work every day.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="primary-link" asp-controller="Auth" asp-action="Login">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Open Workspace
+                    </a>
+                    <a class="secondary-link" asp-controller="Auth" asp-action="ForgotPassword">
+                        <i class="fa-solid fa-key"></i> Recover Access
+                    </a>
+                </div>
+
+                <div class="hero-notes">
+                    <span><i class="fa-solid fa-lock"></i> Protected access</span>
+                    <span><i class="fa-solid fa-folder-tree"></i> Structured document flow</span>
+                    <span><i class="fa-solid fa-bolt"></i> Faster daily operations</span>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+
+                <div class="mock-window">
+                    <div class="mock-titlebar">
+                        <span class="mock-dot"></span>
+                        <span class="mock-dot"></span>
+                        <span class="mock-dot"></span>
+                    </div>
+                    <div class="mock-body">
+                        <div class="mock-row">
+                            <div class="file-icon" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div class="bar w1"></div>
+                                <div class="bar w2"></div>
+                            </div>
+                        </div>
+                        <div class="mock-row">
+                            <div class="file-icon" style="background:linear-gradient(135deg,#0ea5e9,#4f46e5);">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div class="bar w1"></div>
+                                <div class="bar w2"></div>
+                            </div>
+                        </div>
+                        <div class="mock-row">
+                            <div class="file-icon" style="background:linear-gradient(135deg,#06d6a0,#0ea5e9);">
+                                <i class="fa-solid fa-folder"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div class="bar w1"></div>
+                                <div class="bar w2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="float-badge b1"><i class="fa-solid fa-circle-check"></i> Upload complete</div>
+                <div class="float-badge b2"><i class="fa-solid fa-lock"></i> Encrypted at rest</div>
+
+            </div>
+        </section>
+
+        <section class="stats-strip reveal">
+            <div class="stat-item">
+                <div class="stat-value" data-count-to="24" data-suffix="/7">0</div>
+                <div class="stat-label">Access whenever your team needs it</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" data-count-to="1" data-suffix=" Hub">0</div>
+                <div class="stat-label">Retrieval, review, and storage combined</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" data-count-to="99" data-suffix=".9%">0</div>
+                <div class="stat-label">Reliable uptime for daily operations</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" data-count-to="256" data-suffix="-bit">0</div>
+                <div class="stat-label">Encryption protecting every file</div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="section-head reveal">
+                <span class="eyebrow">Why Teams Use DocStore</span>
+                <h2>Built to keep files organized without slowing people down.</h2>
+                <p>
+                    From internal records to day-to-day document coordination, DocStore supports a consistent process
+                    with a polished, secure interface that feels familiar from the first sign-in.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <article class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h3>Organized Storage</h3>
+                    <p>
+                        Keep documents easy to locate with a cleaner, more structured home for operational files and shared records.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h3>Controlled Access</h3>
+                    <p>
+                        Support secure usage patterns with protected entry points and a UI that reinforces trust across every action.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </div>
+                    <h3>Smoother Workflow</h3>
+                    <p>
+                        Reduce confusion around documents by giving users a focused starting point and clear paths into the system.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta-banner reveal">
+            <div class="cta-copy">
+                <h3>Ready to bring your documents into one workspace?</h3>
+                <p>Sign in to pick up where you left off, or recover access in a few clicks if you've lost your password.</p>
+            </div>
+            <a class="primary-link" asp-controller="Auth" asp-action="Login">
+                Open Workspace <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </section>
+
+    </div>
+
+    <footer class="site-footer">
+        <span>&copy; @DateTime.Now.Year DocStore. All rights reserved.</span>
+        <div class="footer-links">
+            <a asp-controller="Auth" asp-action="Login">Sign In</a>
+            <a asp-controller="Auth" asp-action="ForgotPassword">Forgot Password</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        (function () {
+
+            const nav = document.getElementById("siteNav");
+            const compactScrollLimit = 120;
+
+            function updateNavState() {
+                const scrollY = window.scrollY;
+                const isScrolled = scrollY > 12;
+                const progress = Math.min(scrollY / compactScrollLimit, 1);
+
+                nav.classList.toggle("scrolled", isScrolled);
+                document.documentElement.style.setProperty("--nav-progress", progress.toString());
+            }
+
+            window.addEventListener("scroll", updateNavState, { passive: true });
+            updateNavState();
+
+            const revealEls = document.querySelectorAll(".reveal");
+
+            const revealObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("in-view");
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            revealEls.forEach(function (el) {
+                revealObserver.observe(el);
+            });
+
+            const counters = document.querySelectorAll("[data-count-to]");
+
+            function animateCounter(el) {
+                const target = parseFloat(el.getAttribute("data-count-to"));
+                const suffix = el.getAttribute("data-suffix") || "";
+                const duration = 1400;
+                const start = performance.now();
+
+                function step(now) {
+                    const progress = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const value = Math.floor(eased * target);
+                    el.textContent = value + suffix;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        el.textContent = target + suffix;
+                    }
+                }
+
+                requestAnimationFrame(step);
+            }
+
+            const counterObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            counters.forEach(function (el) {
+                counterObserver.observe(el);
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
