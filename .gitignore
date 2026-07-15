@@ -1,0 +1,21 @@
+# Build folders
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build output
+temp-build-output/
+
+# Logs
+*.log
+
+# Rider
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
