@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using Repositories.Services.EmailService;
 using Services.EmailService;
 using Repositories.Models;
+using Repositories.Services.CloudinaryService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddScoped<IAuthInterface, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordResetInterface, PasswordResetRepository>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 builder.Services.AddSession(option =>
 {

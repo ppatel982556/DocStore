@@ -292,6 +292,32 @@ public async Task<IActionResult> Logout()
             return null;
         }
 
+[HttpGet("register")]
+        public IActionResult Register()
+        {
+            return View(new RegisterVM());
+        }
+
+[HttpPost("register")]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Register(RegisterVM model)
+{
+    if (!ModelState.IsValid)
+        return View(model);
+
+    var result = await _authService.Register(model);
+
+    if (!result.Success)
+    {
+        ModelState.AddModelError("", result.Message);
+        return View(model);
+    }
+
+    TempData["Success"] = "Registration successful.";
+
+    return RedirectToAction(nameof(Login));
+}
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

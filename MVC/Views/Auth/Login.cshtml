@@ -51,13 +51,32 @@
                 radial-gradient(circle at 85% 80%, rgba(255,255,255,.12), transparent 45%),
                 linear-gradient(135deg, var(--brand-1) 0%, var(--brand-3) 55%, var(--brand-2) 100%);
             background-size:200% 200%;
-            animation:gradientShift 16s ease infinite;
+            animation:gradientShift 16s ease infinite, bodyFadeIn .5s ease forwards;
+            opacity:0;
         }
 
         @@keyframes gradientShift{
             0%{background-position:0% 50%;}
             50%{background-position:100% 50%;}
             100%{background-position:0% 50%;}
+        }
+
+        @@keyframes bodyFadeIn{
+            from{opacity:0;}
+            to{opacity:1;}
+        }
+
+        @@keyframes cardPopIn{
+            0%{opacity:0;transform:scale(.92) translateY(24px);}
+            100%{opacity:1;transform:scale(1) translateY(0);}
+        }
+
+        @@keyframes shakeX{
+            0%,100%{transform:translateX(0);}
+            20%{transform:translateX(-6px);}
+            40%{transform:translateX(6px);}
+            60%{transform:translateX(-4px);}
+            80%{transform:translateX(4px);}
         }
 
         .login-container{
@@ -77,6 +96,7 @@
             box-shadow:0 25px 60px rgba(20,20,50,.35);
             display:flex;
             overflow:hidden;
+            animation:cardPopIn .55s cubic-bezier(.34,1.56,.64,1);
         }
         .login-card{
             transition: transform .25s ease,
@@ -136,6 +156,11 @@
             display:block;
             object-fit:contain;
             filter:drop-shadow(0 8px 20px rgba(0,0,0,.18));
+            transition:transform .3s ease;
+        }
+
+        .brand-logo-img:hover{
+            transform:scale(1.04) rotate(-1deg);
         }
 
         .brand-copy{
@@ -198,6 +223,7 @@
             border-radius:10px;
             font-size:13.5px;
             padding:10px 14px;
+            animation:cardPopIn .3s ease;
         }
 
         /* Kendo overrides for a cleaner, modern look */
@@ -217,18 +243,25 @@
             border-radius:10px;
             border:1.5px solid #e3e6ef;
             padding:4px 6px;
-            transition:border-color .15s ease, box-shadow .15s ease;
+            transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease;
         }
 
         #LoginForm .k-textbox:focus-within,
         #LoginForm .k-input:focus-within{
             border-color:var(--brand-1);
             box-shadow:0 0 0 3px rgba(79,70,229,.12);
+            transform:translateY(-1px);
         }
 
         #LoginForm .k-form-error{
             color:#dc3545;
             font-size:12.5px;
+        }
+
+        #LoginForm .k-invalid,
+        #LoginForm .k-invalid input,
+        #LoginForm .k-invalid .k-input-inner{
+            animation:shakeX .35s ease;
         }
 
         .form-options{
@@ -243,10 +276,60 @@
             color:var(--brand-1);
             text-decoration:none;
             font-weight:600;
+            position:relative;
         }
 
-        .forgot-link:hover{
-            text-decoration:underline;
+        .forgot-link::after{
+            content:"";
+            position:absolute;
+            left:0;
+            bottom:-2px;
+            width:0;
+            height:1.5px;
+            background:var(--brand-1);
+            transition:width .2s ease;
+        }
+
+        .forgot-link:hover::after{
+            width:100%;
+        }
+
+        .auth-links{
+            margin-top:18px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:12px;
+            align-items:center;
+        }
+
+        .auth-links a{
+            text-decoration:none;
+            font-size:13.5px;
+            font-weight:600;
+            transition:color .15s ease, transform .15s ease;
+        }
+
+        .auth-links a:hover{
+            transform:translateX(2px);
+        }
+
+        .register-link{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            color:var(--brand-1);
+        }
+
+        .register-link:hover{
+            color:var(--brand-3);
+        }
+
+        .back-home-link{
+            color:var(--muted);
+        }
+
+        .back-home-link:hover{
+            color:var(--brand-1);
         }
 
         .k-form-buttons{
@@ -268,8 +351,13 @@
         }
 
         #LoginForm .k-button-solid-primary:hover{
-            transform:translateY(-1px);
+            transform:translateY(-2px);
             box-shadow:0 10px 22px rgba(79,70,229,.4);
+        }
+
+        #LoginForm .k-button-solid-primary:active{
+            transform:scale(.96) translateY(0);
+            box-shadow:0 4px 10px rgba(79,70,229,.35);
         }
 
         #LoginForm #btnShowPassword,
@@ -280,12 +368,18 @@
             font-size:13.5px;
             font-weight:600;
             color:var(--muted);
+            transition:transform .15s ease, color .15s ease, border-color .15s ease;
         }
 
         #LoginForm #btnShowPassword:hover,
         #LoginForm #btnClear:hover{
             border-color:var(--brand-1);
             color:var(--brand-1);
+            transform:translateY(-2px);
+        }
+
+        #LoginForm #btnClear:active{
+            transform:scale(.96);
         }
 
         .password-wrapper {
@@ -298,11 +392,12 @@
             color: #6c7486;
             opacity: 40%;
             font-size: 18px;
-            transition: color .2s ease;
+            transition: color .2s ease, transform .15s ease;
         }
 
         .password-toggle:hover {
             color: var(--brand-1);
+            transform:scale(1.1);
         }
 
         .k-checkbox {
@@ -574,6 +669,15 @@
 
             <form id="LoginForm"></form>
 
+            <div class="auth-links">
+                <a href="@Url.Action("Register","Auth")" class="register-link">
+                    <i class="fa-solid fa-user-plus"></i> Create an account
+                </a>
+                <a href="@Url.Action("Index","Home")" class="back-home-link">
+                    Back to landing page
+                </a>
+            </div>
+
         </div>
 
     </div>
@@ -590,6 +694,10 @@
 $(function () {
 
     const validationBox = $("#validation-success");
+
+    // Regex used for client-side, real-time feedback (server still validates on submit).
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
     $("#LoginForm").kendoForm({
 
@@ -622,6 +730,8 @@ $(function () {
                         'required ' +
                         'data-required-msg="Email is required." ' +
                         'data-email-msg="Please enter a valid email address." ' +
+                        'pattern="^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ' +
+                        'data-pattern-msg="Please enter a valid email address." ' +
                         'placeholder="you@company.com"/>')
                         .appendTo(container)
                         .kendoTextBox({
@@ -723,6 +833,15 @@ $(function () {
 
                 }, 5000);
 
+                return;
+            }
+
+            // Extra client-side regex safety net on top of Kendo's built-in validation.
+            const emailValue = $("#LoginForm input[name='Email']").val() || "";
+            const passwordValue = $("#Password").val() || "";
+
+            if (!emailRegex.test(emailValue)) {
+                validationBox.html('<div class="alert alert-danger">Please enter a valid email address.</div>');
                 return;
             }
 

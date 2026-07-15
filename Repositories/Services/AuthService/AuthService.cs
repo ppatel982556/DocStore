@@ -4,6 +4,7 @@ using Repositories.Constants.Enums;
 using Repositories.Interfaces;
 using Repositories.Models;
 using Repositories.Models.ViewModels.Auth;
+using Repositories.Services.CloudinaryService;
 
 namespace Services.AuthService
 {
@@ -12,13 +13,18 @@ namespace Services.AuthService
         private readonly IAuthInterface _authRepository;
         private readonly ILogger<AuthService> _logger;
 
-        public AuthService(
-            IAuthInterface authRepository,
-            ILogger<AuthService> logger)
-        {
-            _authRepository = authRepository;
-            _logger = logger;
-        }
+
+        private readonly ICloudinaryService _cloudinaryService;
+
+public AuthService(
+    IAuthInterface authRepository,
+    ICloudinaryService cloudinaryService,
+    ILogger<AuthService> logger)
+{
+    _authRepository = authRepository;
+    _cloudinaryService = cloudinaryService;
+    _logger = logger;
+}   
 
         public async Task<LoginResult> LoginAsync(vmLogin model)
         {
@@ -57,6 +63,40 @@ namespace Services.AuthService
                 Status = LoginStatus.Success,
                 User = user
             };
+        }
+        public async Task<ServiceResult> Register(RegisterVM model)
+        {
+            var existingUser = await _authRepository.GetUserByEmailAsync(model.Email);
+
+            if (existingUser != null)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    Message = "Email already exists."
+                };
+            }
+
+            string? profilePictureId = null;
+
+            if (model.ProfilePicture != null)
+            {
+                var uploadResult =
+                    await _cloudinaryService.UploadProfilePictureAsync(model.ProfilePicture);
+
+                if (uploadResult == null)
+                {
+                    return new ServiceResult
+                    {
+                        Success = false,
+                        Message = "Unable to upload profile picture."
+                    };
+                }
+
+                profilePictureId = uploadResult.PublicId;
+            }
+
+            return await _authRepository.Register(model, profilePictureId);
         }
     }
 }

@@ -6,5 +6,6 @@ namespace Services.AuthService
     public interface IAuthService
     {
         Task<LoginResult> LoginAsync(vmLogin model);
+        Task<ServiceResult> Register(RegisterVM model);
     }
 }

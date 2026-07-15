@@ -49,6 +49,13 @@
             font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
             background: #f5f6fb;
             overflow-x: hidden;
+            opacity: 0;
+            animation: pageFadeIn .55s ease forwards;
+        }
+
+        @@keyframes pageFadeIn{
+            from{opacity:0;transform:translateY(6px);}
+            to{opacity:1;transform:translateY(0);}
         }
 
         /* ---------- Ambient background ---------- */
@@ -138,6 +145,10 @@
             transition: width .25s ease, transform .25s ease;
         }
 
+        .brand-mark:hover img {
+            transform: scale(1.04);
+        }
+
         .nav-actions {
             display: flex;
             align-items: center;
@@ -169,13 +180,18 @@
 
         .nav-link:hover,
         .nav-button:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             color: #fff;
         }
 
         .nav-link:hover {
             color: var(--ink);
             border-color: rgba(79,70,229,.3);
+        }
+
+        .nav-link:active,
+        .nav-button:active {
+            transform: scale(.95);
         }
 
         /* ---------- Layout shell ---------- */
@@ -265,6 +281,11 @@
             box-shadow: 0 22px 44px rgba(20,20,50,.34);
         }
 
+        .hero-actions .primary-link:active,
+        .hero-actions .secondary-link:active {
+            transform: scale(.96);
+        }
+
         .hero-actions .secondary-link {
             color: #fff;
             background: rgba(255,255,255,.12);
@@ -289,6 +310,11 @@
             display: inline-flex;
             align-items: center;
             gap: 9px;
+            transition: transform .2s ease;
+        }
+
+        .hero-notes span:hover {
+            transform: translateY(-2px);
         }
 
         .hero-notes i {
@@ -313,6 +339,11 @@
             box-shadow: var(--shadow);
             overflow: hidden;
             animation: floatCard 6s ease-in-out infinite;
+            transition: transform .3s ease, box-shadow .3s ease;
+        }
+
+        .mock-window:hover {
+            box-shadow: 0 34px 90px rgba(23,24,58,.22);
         }
 
         @@keyframes floatCard {
@@ -352,6 +383,12 @@
             margin-bottom: 10px;
             background: #f7f8fc;
             border: 1px solid var(--line);
+            transition: transform .2s ease, background-color .2s ease;
+        }
+
+        .mock-row:hover {
+            transform: translateX(3px);
+            background: #eef0fb;
         }
 
         .mock-row .file-icon {
@@ -423,6 +460,11 @@
         .stat-item {
             text-align: center;
             border-right: 1px solid var(--line);
+            transition: transform .2s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
         }
 
         .stat-item:last-child {
@@ -496,6 +538,10 @@
             transform: translateY(-6px);
             box-shadow: 0 24px 50px rgba(23,24,58,.14);
             border-color: rgba(79,70,229,.25);
+        }
+
+        .feature-card:active {
+            transform: translateY(-2px) scale(.99);
         }
 
         .feature-icon {
@@ -598,6 +644,10 @@
             transform: translateY(-2px);
         }
 
+        .cta-banner .primary-link:active {
+            transform: scale(.96);
+        }
+
         /* ---------- Footer ---------- */
         .site-footer {
             position: relative;
@@ -623,10 +673,12 @@
             color: rgba(255,255,255,.75);
             text-decoration: none;
             font-weight: 600;
+            transition: color .15s ease, transform .15s ease;
         }
 
         .site-footer a:hover {
             color: #fff;
+            transform: translateY(-1px);
         }
 
         @@media (max-width: 991px) {
@@ -706,7 +758,7 @@
             </a>
 
             <div class="nav-actions">
-                <a class="nav-link" asp-controller="Auth" asp-action="ForgotPassword">Forgot Password</a>
+                <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
                 <a class="nav-button" asp-controller="Auth" asp-action="Login">Sign In</a>
             </div>
         </div>
@@ -732,8 +784,8 @@
                     <a class="primary-link" asp-controller="Auth" asp-action="Login">
                         <i class="fa-solid fa-arrow-right-to-bracket"></i> Open Workspace
                     </a>
-                    <a class="secondary-link" asp-controller="Auth" asp-action="ForgotPassword">
-                        <i class="fa-solid fa-key"></i> Recover Access
+                    <a class="secondary-link" asp-controller="Auth" asp-action="Register">
+                        <i class="fa-solid fa-user-plus"></i> Create Account
                     </a>
                 </div>
 
@@ -854,11 +906,16 @@
         <section class="cta-banner reveal">
             <div class="cta-copy">
                 <h3>Ready to bring your documents into one workspace?</h3>
-                <p>Sign in to pick up where you left off, or recover access in a few clicks if you've lost your password.</p>
+                <p>Create a new DocStore account or sign in to continue working in the same secure document workspace.</p>
             </div>
-            <a class="primary-link" asp-controller="Auth" asp-action="Login">
-                Open Workspace <i class="fa-solid fa-arrow-right"></i>
-            </a>
+            <div style="position:relative;z-index:1;display:flex;gap:12px;flex-wrap:wrap;">
+                <a class="primary-link" asp-controller="Auth" asp-action="Login">
+                    Open Workspace <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a class="primary-link" asp-controller="Auth" asp-action="Register" style="color:#1a1d2e;">
+                    Create Account <i class="fa-solid fa-user-plus"></i>
+                </a>
+            </div>
         </section>
 
     </div>
@@ -867,7 +924,7 @@
         <span>&copy; @DateTime.Now.Year DocStore. All rights reserved.</span>
         <div class="footer-links">
             <a asp-controller="Auth" asp-action="Login">Sign In</a>
-            <a asp-controller="Auth" asp-action="ForgotPassword">Forgot Password</a>
+            <a asp-controller="Auth" asp-action="Register">Register</a>
         </div>
     </footer>
 

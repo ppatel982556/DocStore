@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Repositories.Models
 {
@@ -22,5 +23,7 @@ namespace Repositories.Models
         public string PhoneNumber { get; set; }
 
         public List<string> Roles { get; set; } = new();
+        public IFormFile? ProfilePicture { get; set; }
+        
     }
 }

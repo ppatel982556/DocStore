@@ -5,6 +5,8 @@ using Repositories.Constants.UserRoles;
 using Repositories.Constants.Users;
 using Repositories.Interfaces;
 using Repositories.Models;
+using Repositories.Models.ViewModels.Auth;
+using Repositories.Services.CloudinaryService;
 using System.Data;
 
 namespace Repositories.Implementations
@@ -14,11 +16,14 @@ namespace Repositories.Implementations
         private readonly NpgsqlConnection _conn;
         private readonly ILogger<AuthRepository> _logger;
 
-        public AuthRepository(NpgsqlConnection conn, ILogger<AuthRepository> logger)
-        {
-            _conn = conn;
-            _logger = logger;
-        }
+
+        public AuthRepository(
+    NpgsqlConnection conn,
+    ILogger<AuthRepository> logger)
+{
+    _conn = conn;
+    _logger = logger;
+}
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
@@ -152,6 +157,111 @@ namespace Repositories.Implementations
                     await _conn.CloseAsync();
             }
         }
-        
+
+        public async Task<ServiceResult> Register(RegisterVM model, string? profilePictureId)
+{
+    ServiceResult result = new();
+
+    try
+    {
+        await _conn.OpenAsync();
+
+        await using var transaction = await _conn.BeginTransactionAsync();
+
+        string checkQuery =
+            "SELECT COUNT(*) FROM " + UserTable.TableName +
+            " WHERE " + UserColumns.Email + " = @Email;";
+
+        await using (var checkCmd = new NpgsqlCommand(checkQuery, _conn, transaction))
+        {
+            checkCmd.Parameters.AddWithValue("@Email", model.Email);
+
+            int count = Convert.ToInt32(await checkCmd.ExecuteScalarAsync());
+
+            if (count > 0)
+            {
+                result.Success = false;
+                result.Message = "Email already exists.";
+
+                return result;
+            }
+        }
+
+        string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+        string insertUserQuery =
+            "INSERT INTO " + UserTable.TableName +
+            " (" +
+            UserColumns.FirstName + ", " +
+            UserColumns.LastName + ", " +
+            UserColumns.Email + ", " +
+            UserColumns.PasswordHash + ", " +
+            UserColumns.PhoneNumber + ", " +
+            UserColumns.ProfilePictureId + ", " +
+            UserColumns.IsActive + ", " +
+            UserColumns.CreatedAt +
+            ") VALUES (" +
+            "@FirstName,@LastName,@Email,@PasswordHash,@PhoneNumber,@ProfilePictureId,@IsActive,@CreatedAt) " +
+            "RETURNING " + UserColumns.UserId + ";";
+
+        int userId;
+
+        await using (var cmd = new NpgsqlCommand(insertUserQuery, _conn, transaction))
+        {
+            cmd.Parameters.AddWithValue("@FirstName", model.FirstName);
+            cmd.Parameters.AddWithValue("@LastName", model.LastName);
+            cmd.Parameters.AddWithValue("@Email", model.Email);
+            cmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+            cmd.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
+            cmd.Parameters.AddWithValue("@ProfilePictureId",
+                (object?)profilePictureId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@IsActive", false);
+            cmd.Parameters.AddWithValue("@CreatedAt", DateTime.UtcNow);
+
+            userId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+        }
+
+        string insertRoleQuery =
+            "INSERT INTO " + UserRoleTable.TableName +
+            " (" +
+            UserRoleColumns.UserId + ", " +
+            UserRoleColumns.RoleId + ", " +
+            UserRoleColumns.AssignedAt +
+            ") VALUES (" +
+            "@UserId,@RoleId,@AssignedAt);";
+
+        await using (var cmd = new NpgsqlCommand(insertRoleQuery, _conn, transaction))
+        {
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@RoleId", 2);
+            cmd.Parameters.AddWithValue("@AssignedAt", DateTime.UtcNow);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        await transaction.CommitAsync();
+
+        result.Success = true;
+        result.Message = "Registration successful.";
+
+        return result;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error while registering user.");
+
+        result.Success = false;
+        result.Message = "Registration failed.";
+
+        return result;
+    }
+    finally
+    {
+        if (_conn.State == ConnectionState.Open)
+        {
+            await _conn.CloseAsync();
+        }
+    }
+}
     }
 }
