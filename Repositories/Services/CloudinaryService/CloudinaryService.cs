@@ -74,7 +74,7 @@ namespace Repositories.Services.CloudinaryService
         {
             if (string.IsNullOrWhiteSpace(publicId))
             {
-                return "/images/default-user.png";
+                return null;
             }
 
             return _cloudinary.Api.UrlImgUp

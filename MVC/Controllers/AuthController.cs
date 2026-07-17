@@ -54,94 +54,102 @@ namespace MVC.Controllers
 
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(vmLogin model)
+public async Task<IActionResult> Login(vmLogin model)
+{
+    try
+    {
+        if (!ModelState.IsValid)
         {
-            try
+            return BadRequest(new
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Please enter valid login credentials."
-                    });
-                }
-
-                var result = await _authService.LoginAsync(model);
-
-                switch (result.Status)
-                {
-                    case LoginStatus.UserNotFound:
-                    case LoginStatus.InvalidPassword:
-
-                        return Unauthorized(new
-                        {
-                            message = "Invalid email or password."
-                        });
-
-                    case LoginStatus.InactiveUser:
-
-                        return Unauthorized(new
-                        {
-                            message = "Your account has been deactivated. Please contact your administrator."
-                        });
-                }
-
-                var user = result.User!;
-
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                    new Claim(ClaimTypes.Email, user.Email)
-                };
-
-                foreach (var role in user.Roles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                }
-
-                var identity = new ClaimsIdentity(
-                    claims,
-                    CookieAuthenticationDefaults.AuthenticationScheme);
-
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal,
-                    new AuthenticationProperties
-                    {
-                        IsPersistent = model.RememberMe,
-
-                        ExpiresUtc = model.RememberMe
-                            ? DateTimeOffset.UtcNow.AddDays(30)
-                            : DateTimeOffset.UtcNow.AddHours(8),
-
-                        AllowRefresh = true
-                    });
-
-                _logger.LogInformation(
-                    "User {UserId} logged in successfully.",
-                    user.UserId);
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Login successful.",
-                    redirectUrl = Url.Action("Index", "Dashboard")
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while logging in.");
-
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "An unexpected error occurred."
-                });
-            }
+                message = "Please enter valid login credentials."
+            });
         }
+
+        var result = await _authService.LoginAsync(model);
+
+        switch (result.Status)
+        {
+            case LoginStatus.UserNotFound:
+            case LoginStatus.InvalidPassword:
+                return Unauthorized(new
+                {
+                    message = "Invalid email or password."
+                });
+
+            case LoginStatus.InactiveUser:
+                return Unauthorized(new
+                {
+                    message = "Your account has been deactivated. Please contact your administrator."
+                });
+        }
+
+        var user = result.User!;
+        var activeRole = result.ActiveRole!;
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+            new Claim(ClaimTypes.Email, user.Email),
+
+            // Custom claims
+            new Claim("FirstName", user.FirstName),
+            new Claim("LastName", user.LastName),
+
+            new Claim("ActiveRoleId", activeRole.RoleId.ToString()),
+            new Claim("ActiveRoleName", activeRole.RoleName),
+
+            new Claim("ProfilePictureId", user.ProfilePictureId ?? string.Empty)
+        };
+
+        // Add all roles
+        foreach (var role in user.Roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+        }
+
+        var identity = new ClaimsIdentity(
+            claims,
+            CookieAuthenticationDefaults.AuthenticationScheme);
+
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal,
+            new AuthenticationProperties
+            {
+                IsPersistent = model.RememberMe,
+                ExpiresUtc = model.RememberMe
+                    ? DateTimeOffset.UtcNow.AddDays(30)
+                    : DateTimeOffset.UtcNow.AddHours(8),
+                AllowRefresh = true
+            });
+
+        _logger.LogInformation(
+            "User {UserId} logged in successfully with active role {Role}.",
+            user.UserId,
+            activeRole.RoleName);
+
+        return Ok(new
+        {
+            success = true,
+            message = "Login successful.",
+            redirectUrl = Url.Action("Index", "Dashboard")
+        });
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error occurred while logging in.");
+
+        return StatusCode(500, new
+        {
+            success = false,
+            message = "An unexpected error occurred."
+        });
+    }
+}
 
 [HttpGet("logout")]
 // [ValidateAntiForgeryToken]

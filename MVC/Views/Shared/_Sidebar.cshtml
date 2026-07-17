@@ -1,0 +1,61 @@
+@model Repositories.Models.ViewModels.LayoutVM
+
+@{
+    var currentPath = ViewContext.HttpContext.Request.Path.Value?.ToLower() ?? "";
+}
+
+<div class="sidebar-header">
+
+    <div class="logo">
+
+        <img src="~/images/logo/DocStore(Small).png"
+             class="logo-image"
+             alt="DocStore" />
+
+        <span class="logo-text">
+            DocStore
+        </span>
+
+    </div>
+
+</div>
+
+<div class="sidebar-menu">
+
+    <ul class="menu-list">
+
+        @foreach (var menu in Model.Pages.OrderBy(x => x.DisplayOrder))
+        {
+            var isActive = currentPath.StartsWith(menu.Route.ToLower());
+
+            <li class="menu-item @(isActive ? "active" : "")">
+
+                <a href="@menu.Route">
+
+                    <span class="k-icon k-font-icon k-i-@menu.Icon"></span>
+
+                    <span class="menu-text">
+                        @menu.PageName
+                    </span>
+
+                </a>
+
+            </li>
+        }
+
+    </ul>
+
+</div>
+
+<div class="sidebar-footer">
+
+    <button id="collapseSidebar"
+            class="k-button k-button-flat w-100">
+
+        <span class="k-icon k-font-icon k-i-menu"></span>
+
+        Collapse
+
+    </button>
+
+</div>

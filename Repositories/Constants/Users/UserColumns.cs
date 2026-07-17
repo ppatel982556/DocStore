@@ -24,7 +24,8 @@ namespace Repositories.Constants.Users
 
         public const string UpdatedBy = "c_updatedby";
 
-        public const string ProfilePicture = "c_profilepicture";
         public const string ProfilePictureId = "c_profilepictureid";
+
+        public const string LastActiveRoleId = "c_lastactiveroleid";
     }
 }

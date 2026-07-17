@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Repositories.Models.ViewModels;
 
 namespace Repositories.Models
 {
@@ -22,8 +23,9 @@ namespace Repositories.Models
         
         public string PhoneNumber { get; set; }
 
-        public List<string> Roles { get; set; } = new();
+        public List<RoleVM> Roles { get; set; } = new();
         public IFormFile? ProfilePicture { get; set; }
-        
+        public string? ProfilePictureId { get; set; }
+        public int? LastActiveRoleId { get; set; }
     }
 }

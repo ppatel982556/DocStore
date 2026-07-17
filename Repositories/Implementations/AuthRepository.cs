@@ -5,6 +5,7 @@ using Repositories.Constants.UserRoles;
 using Repositories.Constants.Users;
 using Repositories.Interfaces;
 using Repositories.Models;
+using Repositories.Models.ViewModels;
 using Repositories.Models.ViewModels.Auth;
 using Repositories.Services.CloudinaryService;
 using System.Data;
@@ -108,55 +109,64 @@ namespace Repositories.Implementations
                 }
             }
         }
-        public async Task<List<string>> GetUserRolesAsync(int userId)
+        public async Task<List<RoleVM>> GetUserRolesAsync(int userId)
+{
+    List<RoleVM> roles = new();
+
+    try
+    {
+        string query = $@"
+            SELECT
+                r.{RoleColumns.RoleId},
+                r.{RoleColumns.RoleName}
+            FROM {RoleTable.TableName} r
+            INNER JOIN {UserRoleTable.TableName} ur
+                ON ur.{UserRoleColumns.RoleId} = r.{RoleColumns.RoleId}
+            WHERE ur.{UserRoleColumns.UserId} = @UserId
+              AND r.{RoleColumns.IsActive} = TRUE
+            ORDER BY r.{RoleColumns.RoleName};";
+
+        await _conn.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand(query, _conn);
+
+        cmd.Parameters.AddWithValue("@UserId", userId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
         {
-            List<string> roles = new();
-
-            try
+            roles.Add(new RoleVM
             {
-                string query = $@"
-                    SELECT
-                        r.{RoleColumns.RoleName}
-                    FROM {RoleTable.TableName} r
-                    INNER JOIN {UserRoleTable.TableName} ur
-                        ON ur.{UserRoleColumns.RoleId} = r.{RoleColumns.RoleId}
-                    WHERE ur.{UserRoleColumns.UserId} = @UserId
-                    AND r.{RoleColumns.IsActive} = TRUE;";
-
-                await _conn.OpenAsync();
-
-                await using var cmd = new NpgsqlCommand(query, _conn);
-
-                cmd.Parameters.AddWithValue("@UserId", userId);
-
-                await using var reader = await cmd.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
-                {
-                    roles.Add(reader.GetString(0));
-                }
-
-                _logger.LogInformation(
-                    "Retrieved {Count} role(s) for UserId {UserId}",
-                    roles.Count,
-                    userId);
-
-                return roles;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,
-                    "Error retrieving roles for UserId {UserId}",
-                    userId);
-
-                throw;
-            }
-            finally
-            {
-                if (_conn.State == System.Data.ConnectionState.Open)
-                    await _conn.CloseAsync();
-            }
+                RoleId = reader.GetInt32(reader.GetOrdinal(RoleColumns.RoleId)),
+                RoleName = reader.GetString(reader.GetOrdinal(RoleColumns.RoleName))
+            });
         }
+
+        _logger.LogInformation(
+            "Retrieved {Count} role(s) for UserId {UserId}",
+            roles.Count,
+            userId);
+
+        return roles;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(
+            ex,
+            "Error retrieving roles for UserId {UserId}",
+            userId);
+
+        throw;
+    }
+    finally
+    {
+        if (_conn.State == ConnectionState.Open)
+        {
+            await _conn.CloseAsync();
+        }
+    }
+}
 
         public async Task<ServiceResult> Register(RegisterVM model, string? profilePictureId)
 {
@@ -190,19 +200,20 @@ namespace Repositories.Implementations
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
         string insertUserQuery =
-            "INSERT INTO " + UserTable.TableName +
-            " (" +
-            UserColumns.FirstName + ", " +
-            UserColumns.LastName + ", " +
-            UserColumns.Email + ", " +
-            UserColumns.PasswordHash + ", " +
-            UserColumns.PhoneNumber + ", " +
-            UserColumns.ProfilePictureId + ", " +
-            UserColumns.IsActive + ", " +
-            UserColumns.CreatedAt +
-            ") VALUES (" +
-            "@FirstName,@LastName,@Email,@PasswordHash,@PhoneNumber,@ProfilePictureId,@IsActive,@CreatedAt) " +
-            "RETURNING " + UserColumns.UserId + ";";
+    "INSERT INTO " + UserTable.TableName +
+    " (" +
+    UserColumns.FirstName + ", " +
+    UserColumns.LastName + ", " +
+    UserColumns.Email + ", " +
+    UserColumns.PasswordHash + ", " +
+    UserColumns.PhoneNumber + ", " +
+    UserColumns.ProfilePictureId + ", " +
+    UserColumns.LastActiveRoleId + ", " +
+    UserColumns.IsActive + ", " +
+    UserColumns.CreatedAt +
+    ") VALUES (" +
+    "@FirstName,@LastName,@Email,@PasswordHash,@PhoneNumber,@ProfilePictureId,@LastActiveRoleId,@IsActive,@CreatedAt) " +
+    "RETURNING " + UserColumns.UserId + ";";
 
         int userId;
 
@@ -216,6 +227,7 @@ namespace Repositories.Implementations
             cmd.Parameters.AddWithValue("@ProfilePictureId",
                 (object?)profilePictureId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@IsActive", false);
+            cmd.Parameters.AddWithValue("@LastActiveRoleId", 2);
             cmd.Parameters.AddWithValue("@CreatedAt", DateTime.UtcNow);
 
             userId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
@@ -261,6 +273,31 @@ namespace Repositories.Implementations
         {
             await _conn.CloseAsync();
         }
+    }
+}
+public async Task UpdateLastActiveRoleAsync(int userId,int roleId)
+{
+    try
+    {
+        string query = $@"
+        UPDATE {UserTable.TableName}
+        SET {UserColumns.LastActiveRoleId}= @RoleId
+        WHERE {UserColumns.UserId}= @UserId;";
+
+        await _conn.OpenAsync();
+
+        using var cmd = new NpgsqlCommand(query,_conn);
+
+        cmd.Parameters.AddWithValue("@RoleId",roleId);
+
+        cmd.Parameters.AddWithValue("@UserId",userId);
+
+        await cmd.ExecuteNonQueryAsync();
+    }
+    finally
+    {
+        if(_conn.State==ConnectionState.Open)
+            await _conn.CloseAsync();
     }
 }
     }

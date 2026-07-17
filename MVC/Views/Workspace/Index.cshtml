@@ -1,0 +1,1699 @@
+@model Repositories.Models.ViewModels.Workspace.WorkspaceVM
+
+@{
+    ViewData["Title"] = "Workspace";
+}
+
+<style>
+
+    /*==========================
+        Workspace Page
+    ==========================*/
+
+    .workspace-page{
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:20px;
+
+        height:100%;
+
+    }
+
+    .workspace-header{
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:space-between;
+
+        gap:16px;
+
+        flex-wrap:wrap;
+
+    }
+
+    .workspace-header h3{
+
+        font-family:var(--font-display);
+
+        font-size:24px;
+
+        font-weight:800;
+
+        letter-spacing:-.02em;
+
+        color:var(--text-dark);
+
+        display:flex;
+
+        align-items:center;
+
+        gap:10px;
+
+    }
+
+    .workspace-header h3 .k-icon{
+
+        font-size:22px;
+
+        color:var(--brand-1);
+
+    }
+
+    .workspace-header .text-muted{
+
+        font-size:14px;
+
+        color:var(--text-light);
+
+    }
+
+    #btnNewGroup{
+
+        border:none;
+
+        cursor:pointer;
+
+    }
+
+
+    /*==========================
+        Splitter Shell
+    ==========================*/
+
+    #workspaceSplitter{
+
+        flex:1;
+
+        min-height:0;
+
+        border-radius:var(--radius-md) !important;
+
+        border:1px solid var(--border-color) !important;
+
+        box-shadow:var(--shadow-sm);
+
+        overflow:hidden;
+
+    }
+
+    #workspaceSplitter.k-splitter{
+
+        background:var(--card-bg);
+
+    }
+
+    #workspaceSplitter .k-pane{
+
+        background:var(--card-bg);
+
+        display:flex;
+
+        flex-direction:column;
+
+    }
+
+    #workspaceSplitter > .k-pane:not(:last-child){
+
+        border-right:1px solid var(--border-color);
+
+    }
+
+    /* Kendo splitbar — thin, brand-tinted on hover instead of the default gray grip */
+    #workspaceSplitter .k-splitbar{
+
+        background:var(--border-color);
+
+        border:none;
+
+        transition:background .18s ease;
+
+    }
+
+    #workspaceSplitter .k-splitbar:hover,
+    #workspaceSplitter .k-splitbar-horizontal-hover{
+
+        background:var(--brand-1);
+
+    }
+
+    #workspaceSplitter .k-splitbar .k-resize-handle{
+
+        background:transparent;
+
+    }
+
+
+    /*==========================
+        Panel Header / Body
+    ==========================*/
+
+    .panel-header{
+
+        padding:14px 18px;
+
+        border-bottom:1px solid var(--border-color);
+
+        background:#fbfbfe;
+
+        flex:none;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:space-between;
+
+        gap:10px;
+
+    }
+
+    .panel-header h5{
+
+        margin:0;
+
+        font-size:13px;
+
+        font-weight:700;
+
+        letter-spacing:.05em;
+
+        text-transform:uppercase;
+
+        color:var(--text-light);
+
+        display:flex;
+
+        align-items:center;
+
+        gap:8px;
+
+        white-space:nowrap;
+
+        overflow:hidden;
+
+        text-overflow:ellipsis;
+    }
+
+    .panel-header h5 .crumb-name{
+
+        color:var(--brand-1);
+
+        text-transform:none;
+
+        letter-spacing:0;
+
+        font-weight:700;
+
+    }
+
+    .panel-header .k-badge{
+
+        font-size:11px;
+
+    }
+
+    .panel-body{
+
+        flex:1;
+
+        min-height:0;
+
+        overflow:auto;
+
+        padding:16px 18px;
+
+        display:flex;
+
+        flex-direction:column;
+
+    }
+
+    .panel-body.no-scroll{
+
+        overflow:hidden;
+
+    }
+
+    .panel-body hr{
+
+        border:none;
+
+        border-top:1px solid var(--border-color);
+
+        margin:14px 0;
+
+        flex:none;
+
+    }
+
+
+    /*==========================
+        Group Search
+    ==========================*/
+
+    #groupSearch{
+
+        width:100%;
+
+    }
+
+    #groupSearch .k-input-inner{
+
+        border-radius:var(--radius-pill) !important;
+
+    }
+
+
+    /*==========================
+        Group List
+    ==========================*/
+
+    #groupList{
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:6px;
+
+        overflow:auto;
+
+        min-height:0;
+
+    }
+
+    .group-card{
+
+        display:flex;
+
+        align-items:center;
+
+        gap:12px;
+
+        padding:11px 14px;
+
+        border-radius:var(--radius-sm);
+
+        font-size:14px;
+
+        font-weight:500;
+
+        color:var(--text-dark);
+
+        cursor:pointer;
+
+        border:1px solid transparent;
+
+        transition:var(--transition);
+
+    }
+
+    .group-card:hover{
+
+        background:var(--accent-soft);
+
+        border-color:rgba(79,70,229,.15);
+
+    }
+
+    .group-card.active{
+
+        background:linear-gradient(135deg, var(--brand-1), var(--brand-3));
+
+        color:#fff;
+
+        box-shadow:0 8px 18px rgba(79,70,229,.28);
+
+    }
+
+    .group-card .k-icon{
+
+        font-size:17px;
+
+        color:var(--brand-1);
+
+    }
+
+    .group-card.active .k-icon{
+
+        color:#fff;
+
+    }
+
+
+    /*==========================
+        Folder Toolbar
+    ==========================*/
+
+    #folderToolbar{
+
+        display:flex;
+
+        gap:10px;
+
+        flex-wrap:wrap;
+
+        flex:none;
+
+    }
+
+    #folderToolbar .k-searchbox{
+
+        margin-left:auto;
+
+        width:220px;
+
+    }
+
+
+    /*==========================
+        Empty States
+    ==========================*/
+
+    .empty-panel{
+
+        flex:1;
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+
+        justify-content:center;
+
+        gap:10px;
+
+        text-align:center;
+
+        padding:30px 16px;
+
+        color:var(--text-faint);
+
+    }
+
+    .empty-panel .k-icon{
+
+        font-size:36px;
+
+        color:rgba(79,70,229,.25);
+
+    }
+
+    .empty-panel p{
+
+        margin:0;
+
+        font-size:13.5px;
+
+        font-weight:500;
+
+    }
+
+    .empty-panel span.hint{
+
+        font-size:12px;
+
+        color:var(--text-faint);
+
+        font-weight:400;
+    }
+
+
+    /*==========================
+        Folder Tree
+    ==========================*/
+
+    #folderTree{
+
+        flex:1;
+
+        min-height:0;
+
+        display:flex;
+
+        flex-direction:column;
+
+    }
+
+    #folderTree .k-treeview{
+
+        overflow:auto;
+
+        flex:1;
+
+        min-height:0;
+
+    }
+
+    #folderTree .k-treeview-item{
+
+        border-radius:var(--radius-sm);
+
+    }
+
+    #folderTree .k-treeview-leaf{
+
+        padding:7px 8px;
+
+        border-radius:var(--radius-sm);
+
+        font-size:13.5px;
+
+        font-weight:500;
+
+        color:var(--text-dark);
+
+        transition:var(--transition);
+
+    }
+
+    #folderTree .k-treeview-leaf:hover{
+
+        background:var(--accent-soft);
+
+    }
+
+    #folderTree .k-treeview-leaf.k-selected,
+    #folderTree .k-treeview-leaf.k-selected:hover{
+
+        background:linear-gradient(135deg, var(--brand-1), var(--brand-3));
+
+        color:#fff;
+
+    }
+
+    #folderTree .k-treeview-leaf.k-selected .k-icon,
+    #folderTree .k-treeview-leaf.k-selected .node-count{
+
+        color:#fff;
+
+    }
+
+    #folderTree .node-icon{
+
+        font-size:16px;
+
+        color:var(--brand-1);
+
+        margin-right:2px;
+    }
+
+    #folderTree .node-count{
+
+        margin-left:auto;
+
+        font-size:11px;
+
+        color:var(--text-faint);
+
+        font-weight:600;
+
+    }
+
+    #folderTree .k-treeview-leaf .k-treeview-leaf-text{
+
+        display:flex;
+
+        align-items:center;
+
+        gap:6px;
+
+        width:100%;
+
+    }
+
+
+    /*==========================
+        Content Grid
+    ==========================*/
+
+    #contentGrid{
+
+        flex:1;
+
+        min-height:0;
+
+        display:flex;
+
+        flex-direction:column;
+
+        overflow:hidden;
+
+    }
+
+    #contentGrid .k-grid{
+
+        flex:1;
+
+        min-height:0;
+
+    }
+
+    #contentGrid .k-grid-content{
+
+        overflow:auto;
+
+    }
+
+    #contentGrid .k-grid-header-wrap,
+    #contentGrid .k-grid-content table{
+
+        min-width:900px;
+
+    }
+
+    #contentGrid .k-grid-header{
+
+        background:#fbfbfe;
+
+    }
+
+    #contentGrid .k-grid-header th{
+
+        font-size:12px;
+
+        font-weight:700;
+
+        letter-spacing:.03em;
+
+        text-transform:uppercase;
+
+        color:var(--text-light);
+
+    }
+
+    #contentGrid .k-grid-content td{
+
+        font-size:13.5px;
+
+        color:var(--text-dark);
+
+        vertical-align:middle;
+
+    }
+
+    #contentGrid .k-grid-content tr{
+
+        transition:var(--transition);
+
+    }
+
+    #contentGrid .k-grid-content tr:hover{
+
+        background:var(--accent-soft);
+
+    }
+
+    #contentGrid .k-grid-content tr.k-selected td{
+
+        background:rgba(79,70,229,.08);
+
+    }
+
+    #contentGrid .k-grid td,
+    #contentGrid .k-grid th{
+
+        white-space:nowrap;
+
+    }
+
+    .row-name{
+
+        display:flex;
+
+        align-items:center;
+
+        gap:10px;
+
+        font-weight:600;
+
+    }
+
+    .row-name .k-icon{
+
+        font-size:18px;
+
+    }
+
+    .row-name .k-icon.type-folder{
+
+        color:var(--brand-1);
+
+    }
+
+    .row-name .k-icon.type-file{
+
+        color:#9aa1b1;
+
+    }
+
+    .type-badge{
+
+        display:inline-flex;
+
+        align-items:center;
+
+        padding:3px 10px;
+
+        border-radius:var(--radius-pill);
+
+        font-size:11.5px;
+
+        font-weight:700;
+
+        letter-spacing:.02em;
+
+        text-transform:capitalize;
+
+    }
+
+    .type-badge.folder{
+
+        background:rgba(79,70,229,.12);
+
+        color:var(--brand-1);
+
+    }
+
+    .type-badge.file{
+
+        background:rgba(154,161,177,.16);
+
+        color:#6b7280;
+
+    }
+
+    .row-path{
+
+        color:var(--text-light);
+
+        font-size:12.5px;
+
+    }
+
+    .row-actions-btn{
+
+        border-radius:50% !important;
+
+        width:32px;
+
+        height:32px;
+
+        padding:0 !important;
+
+        color:var(--text-light);
+
+    }
+
+    .row-actions-btn:hover{
+
+        background:var(--accent-soft) !important;
+
+        color:var(--brand-1);
+
+    }
+
+
+    /*==========================
+        Actions Popup Menu
+    ==========================*/
+
+    .actions-menu{
+
+        display:none;
+
+        min-width:220px;
+
+        background:var(--card-bg);
+
+        border:1px solid var(--border-color);
+
+        border-radius:var(--radius-md);
+
+        box-shadow:0 12px 28px rgba(20,20,43,.16);
+
+        padding:6px;
+
+        z-index:10001;
+
+    }
+
+    .actions-menu ul{
+
+        list-style:none;
+
+        margin:0;
+
+        padding:0;
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:2px;
+
+    }
+
+    .actions-menu li{
+
+        display:flex;
+
+        align-items:center;
+
+        gap:10px;
+
+        padding:9px 12px;
+
+        border-radius:var(--radius-sm);
+
+        font-size:13.5px;
+
+        font-weight:500;
+
+        color:var(--text-dark);
+
+        cursor:pointer;
+
+        transition:var(--transition);
+
+    }
+
+    .actions-menu li:hover{
+
+        background:var(--accent-soft);
+
+        color:var(--brand-1);
+
+    }
+
+    .actions-menu li .k-icon{
+
+        font-size:16px;
+
+        color:var(--text-light);
+
+        width:18px;
+
+        text-align:center;
+
+    }
+
+    .actions-menu li:hover .k-icon{
+
+        color:var(--brand-1);
+
+    }
+
+    .actions-menu li.danger{
+
+        color:#dc2626;
+
+    }
+
+    .actions-menu li.danger .k-icon{
+
+        color:#dc2626;
+
+    }
+
+    .actions-menu li.danger:hover{
+
+        background:rgba(220,38,38,.08);
+
+        color:#dc2626;
+
+    }
+
+    .actions-menu li.danger:hover .k-icon{
+
+        color:#dc2626;
+
+    }
+
+    .actions-menu .menu-divider{
+
+        height:1px;
+
+        background:var(--border-color);
+
+        margin:5px 4px;
+
+        padding:0;
+
+        cursor:default;
+
+    }
+
+    .actions-menu .menu-divider:hover{
+
+        background:var(--border-color);
+
+    }
+
+
+    /*==========================
+        Responsive
+    ==========================*/
+
+    @@media (max-width:768px){
+
+        .workspace-header{
+
+            align-items:flex-start;
+
+        }
+
+        #folderToolbar .k-searchbox{
+
+            margin-left:0;
+
+            width:100%;
+
+        }
+
+    }
+
+</style>
+
+<div class="workspace-page">
+
+    <div class="workspace-header">
+
+        <div>
+            <h3 class="mb-1"><span class="k-icon k-font-icon k-i-folder"></span> Workspace</h3>
+            <span class="text-muted">
+                Organize your groups, folders and documents.
+            </span>
+        </div>
+
+        <button id="btnNewGroup">
+            <span class="k-icon k-i-plus"></span> New Group
+        </button>
+
+    </div>
+
+    <div id="workspaceSplitter">
+
+        <!-- ===================== GROUPS ===================== -->
+
+        <div>
+
+            <div class="panel-header">
+
+                <h5><span class="k-icon k-font-icon k-i-menu"></span> Groups</h5>
+
+            </div>
+
+            <div class="panel-body">
+
+                <input id="groupSearch" />
+
+                <hr />
+
+                @if (Model.Groups.Any())
+                {
+                    <div id="groupList">
+
+                        @foreach (var group in Model.Groups)
+                        {
+                            <div class="group-card"
+                                 data-id="@group.GroupId">
+
+                                <span class="k-icon k-font-icon k-i-folder"></span>
+
+                                @group.GroupName
+
+                            </div>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-panel">
+
+                        <span class="k-icon k-font-icon k-i-folder-open"></span>
+
+                        <p>No groups found.</p>
+                        <span class="hint">Create a group to get started.</span>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+        <!-- ===================== TREE ===================== -->
+
+        <div>
+
+            <div class="panel-header">
+
+                <h5><span class="k-icon k-font-icon k-i-treeview"></span> Folder Tree</h5>
+
+            </div>
+
+            <div class="panel-body no-scroll">
+
+                <div id="folderTree">
+
+                    <div class="empty-panel">
+
+                        <span class="k-icon k-font-icon k-i-treeview"></span>
+
+                        <p>Select a group to load folders.</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================== CONTENT ===================== -->
+
+        <div>
+
+            <div class="panel-header">
+
+                <h5 id="contentPanelTitle"><span class="k-icon k-font-icon k-i-grid-layout"></span> Folder Contents</h5>
+
+            </div>
+
+            <div class="panel-body no-scroll">
+
+                <div id="folderToolbar">
+
+                    <button id="btnNewFolder">
+                        <span class="k-icon k-i-folder-add"></span> New Folder
+                    </button>
+
+                    <button id="btnUpload">
+                        <span class="k-icon k-i-upload"></span> Upload
+                    </button>
+
+                    <button id="btnRefresh">
+                        <span class="k-icon k-i-reload"></span> Refresh
+                    </button>
+
+                </div>
+
+                <hr />
+
+                <div id="contentGrid"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Shared actions popup, reused for every grid row -->
+<div id="actionsPopup" class="actions-menu">
+    <ul>
+        <li data-action="addChild"><span class="k-icon k-i-folder-add"></span> Create Child Folder</li>
+        <li data-action="upload"><span class="k-icon k-i-upload"></span> Upload File Here</li>
+        <li data-action="rename"><span class="k-icon k-i-edit"></span> Rename</li>
+        <li data-action="move"><span class="k-icon k-i-arrow-chevron-right"></span> Move To...</li>
+        <li data-action="copy"><span class="k-icon k-i-copy"></span> Copy To...</li>
+        <li data-action="download"><span class="k-icon k-i-download"></span> Download</li>
+        <li data-action="share"><span class="k-icon k-i-share"></span> Share / Permissions</li>
+        <li data-action="details"><span class="k-icon k-i-information"></span> Properties</li>
+        <li class="menu-divider"></li>
+        <li data-action="trash" class="danger"><span class="k-icon k-i-trash"></span> Move to Trash</li>
+    </ul>
+</div>
+
+@section Scripts
+{
+<script>
+var currentGroupId = null;
+var currentFolderId = null;
+var currentFolderName = null;
+var activeActionId = null;
+var treeviewWidget = null;
+var actionsPopup = null;
+
+$(function () {
+
+    // Splitter — content pane now gets the lion's share of the room
+    $("#workspaceSplitter").kendoSplitter({
+        orientation: "horizontal",
+        panes: [
+            { size: "220px", min: "180px", max: "280px", collapsible: true },
+            { size: "240px", min: "190px", max: "320px", collapsible: true },
+            { collapsible: false, min: "520px" }
+        ]
+    });
+
+    // Buttons
+    $("#btnNewGroup").kendoButton({ themeColor: "primary", rounded: "full" });
+    $("#btnNewFolder").kendoButton({ themeColor: "base", rounded: "medium" });
+    $("#btnUpload").kendoButton({ themeColor: "primary", rounded: "medium" });
+    $("#btnRefresh").kendoButton({ themeColor: "base", rounded: "medium", fillMode: "flat" });
+
+    // Group search box
+    $("#groupSearch").kendoTextBox({ placeholder: "Search groups...", clearButton: true });
+
+    $("#groupSearch").on("input", function () {
+        var term = $(this).val().toLowerCase();
+        $("#groupList .group-card").each(function () {
+            var match = $(this).text().toLowerCase().indexOf(term) > -1;
+            $(this).toggle(match);
+        });
+    });
+
+    // Actions popup (single shared instance, re-anchored per click)
+    actionsPopup = $("#actionsPopup").kendoPopup({
+        animation: {
+            open: { effects: "fade:in", duration: 120 },
+            close: { effects: "fade:out", duration: 100 }
+        }
+    }).data("kendoPopup");
+
+    $(document).on("click", ".row-actions-btn", function (e) {
+        e.stopPropagation();
+        activeActionId = $(this).data("id");
+        actionsPopup.setOptions({ anchor: this });
+        actionsPopup.open();
+    });
+
+    $("#actionsPopup").on("click", "li[data-action]", function () {
+        var action = $(this).data("action");
+        actionsPopup.close();
+        handleFolderAction(action, activeActionId);
+    });
+
+    $(document).on("click", function (e) {
+        if (actionsPopup && actionsPopup.visible() &&
+            !$(e.target).closest("#actionsPopup, .row-actions-btn").length) {
+            actionsPopup.close();
+        }
+    });
+
+    // Group selection
+    $("#groupList").on("click", ".group-card", function () {
+
+        $(".group-card").removeClass("active");
+        $(this).addClass("active");
+
+        currentGroupId = $(this).data("id");
+        currentFolderId = null;
+        currentFolderName = null;
+
+        setContentTitle(null);
+        loadFolderTree(currentGroupId);
+        loadFolderContents(currentGroupId, null);
+
+    });
+
+    // Toolbar actions
+    $("#btnNewFolder").on("click", function () {
+        if (!currentGroupId) {
+            kendo.alert("Please select a group first.");
+            return;
+        }
+        promptForName("New Folder", "Folder name", function (name) {
+            createFolder(currentGroupId, currentFolderId, name);
+        });
+    });
+
+    $("#btnUpload").on("click", function () {
+        if (!currentGroupId) {
+            kendo.alert("Please select a group first.");
+            return;
+        }
+        uploadFileTo(currentFolderId);
+    });
+
+    $("#btnRefresh").on("click", function () {
+        if (currentGroupId) {
+            loadFolderTree(currentGroupId);
+        }
+        if (currentGroupId && currentFolderId !== undefined) {
+            loadFolderContents(currentGroupId, currentFolderId);
+        }
+    });
+
+    $("#btnNewGroup").on("click", function () {
+        promptForName("New Group", "Group name", function (name) {
+            createGroup(name);
+        });
+    });
+
+});
+
+/*==========================
+    Helpers
+==========================*/
+
+function promptForName(title, label, onConfirm) {
+    var win = $("<div/>").kendoWindow({
+        title: title,
+        modal: true,
+        resizable: false,
+        width: "360px",
+        visible: false,
+        close: function () { win.destroy(); }
+    }).data("kendoWindow");
+
+    var $content = $(
+        '<div style="padding:4px 2px 8px;">' +
+            '<label style="font-size:12.5px;font-weight:600;color:var(--text-light);display:block;margin-bottom:6px;">' + label + '</label>' +
+            '<input id="promptInput" style="width:100%;" />' +
+            '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;">' +
+                '<button id="promptCancel" class="k-button">Cancel</button>' +
+                '<button id="promptOk" class="k-button k-button-solid-primary">Confirm</button>' +
+            '</div>' +
+        '</div>');
+
+    win.content($content);
+    win.center().open();
+
+    $content.find("#promptInput").kendoTextBox({ placeholder: label });
+
+    $content.find("#promptCancel").on("click", function () { win.close(); });
+    $content.find("#promptOk").on("click", function () {
+        var val = $content.find("#promptInput").val();
+        if (!val) {
+            kendo.alert("Please enter a value.");
+            return;
+        }
+        win.close();
+        onConfirm(val);
+    });
+}
+
+function setContentTitle(name) {
+    var $title = $("#contentPanelTitle");
+    if (name) {
+        $title.html('<span class="k-icon k-font-icon k-i-grid-layout"></span> Folder Contents &nbsp;/&nbsp; <span class="crumb-name">' + name + '</span>');
+    } else {
+        $title.html('<span class="k-icon k-font-icon k-i-grid-layout"></span> Folder Contents');
+    }
+}
+
+function clearGrid(message) {
+    var grid = $("#contentGrid").data("kendoGrid");
+    if (grid) {
+        grid.destroy();
+    }
+    $("#contentGrid").empty().append(
+        '<div class="empty-panel"><span class="k-icon k-font-icon k-i-grid-layout"></span><p>' + message + '</p></div>'
+    );
+}
+
+/*==========================
+    Data loading
+==========================*/
+
+function loadFolderContents(groupId, folderId) {
+
+    kendo.ui.progress($("#contentGrid"), true);
+
+    $.ajax({
+
+        url: "/workspace/folder-contents",
+        type: "GET",
+        data: { groupId: groupId, folderId: folderId },
+
+        success: function (data) {
+            buildFolderGrid(data);
+        },
+
+        error: function () {
+            alert("Unable to load folder contents.");
+        },
+
+        complete: function () {
+            kendo.ui.progress($("#contentGrid"), false);
+        }
+
+    });
+}
+
+function loadFolderTree(groupId) {
+
+    kendo.ui.progress($("#folderTree"), true);
+
+    $.ajax({
+
+        url: "/workspace/folders/" + groupId,
+        type: "GET",
+
+        success: function (data) {
+            buildTree(data);
+        },
+
+        error: function () {
+            alert("Unable to load folders.");
+        },
+
+        complete: function () {
+            kendo.ui.progress($("#folderTree"), false);
+        }
+
+    });
+}
+
+function nodeHasChildren(dataItem) {
+    return !!(dataItem && dataItem.items && dataItem.items.length);
+}
+
+function activateTreeNode(treeView, node) {
+    var dataItem = treeView.dataItem(node);
+
+    if (!dataItem) {
+        return;
+    }
+
+    currentFolderId = dataItem.id;
+    currentFolderName = dataItem.text;
+
+    if (nodeHasChildren(dataItem)) {
+        treeView.expand(node);
+    }
+
+    setContentTitle(currentFolderName);
+    loadFolderContents(currentGroupId, currentFolderId);
+}
+
+function buildTree(data) {
+
+var existingTree = $("#folderTree").data("kendoTreeView");
+
+if (existingTree) {
+    existingTree.destroy();
+}
+
+$("#folderTree").empty();
+    var tree = [];
+    var lookup = {};
+
+    data.forEach(function (item) {
+        lookup[item.id] = {
+            id: item.id,
+            text: item.text,
+            childCount: item.childCount || 0,
+            expanded: false,
+            items: []
+        };
+    });
+
+    data.forEach(function (item) {
+        if (item.parentId == null) {
+            tree.push(lookup[item.id]);
+        }
+        else if (lookup[item.parentId]) {
+            lookup[item.parentId].items.push(lookup[item.id]);
+        }
+    });
+
+    $("#folderTree").empty();
+
+    treeviewWidget = $("#folderTree").kendoTreeView({
+
+    dataSource: new kendo.data.HierarchicalDataSource({
+        data: tree,
+        schema: {
+            model: {
+                id: "id",
+                children: "items"
+            }
+        }
+    }),
+
+    dataTextField: "text",
+
+    template:
+        '<span class="node-icon k-icon k-font-icon k-i-folder"></span>' +
+        '<span>#: item.text #</span>' +
+        '# if (item.items && item.items.length) { #' +
+            '<span class="node-count">#: item.items.length #</span>' +
+        '# } #',
+
+    select: function (e) {
+
+    var dataItem = this.dataItem(e.node);
+
+    if (!dataItem)
+        return;
+
+    currentFolderId = dataItem.id;
+    currentFolderName = dataItem.text;
+
+    // Expand if collapsed
+    if (dataItem.hasChildren && !$(e.node).hasClass("k-expanded")) {
+        this.expand(e.node);
+    }
+
+    // Update breadcrumb
+    setContentTitle(currentFolderName);
+
+    // Load contents
+    loadFolderContents(currentGroupId, currentFolderId);
+
+}
+
+}).data("kendoTreeView");
+
+    @* $("#folderTree").off("click.workspaceNode").on("click.workspaceNode", ".k-treeview-leaf", function () {
+        var treeView = $("#folderTree").data("kendoTreeView");
+        var $leaf = $(this);
+        var $node = $leaf.closest(".k-treeview-item");
+
+        if (!treeView || !$node.length) {
+            return;
+        }
+
+        treeView.select($leaf);
+        activateTreeNode(treeView, $node);
+    }); *@
+
+}
+
+function buildFolderGrid(data) {
+
+    // Destroy existing grid if present
+    var existingGrid = $("#contentGrid").data("kendoGrid");
+
+    if (existingGrid) {
+        existingGrid.destroy();
+    }
+
+    // ALWAYS clear the container
+    $("#contentGrid").empty();
+
+    // Show empty state if there is no data
+    if (!data || data.length === 0) {
+
+        clearGrid("This folder is empty. Upload a file or create a sub-folder to get started.");
+
+        return;
+    }
+
+    // Create Grid
+    $("#contentGrid").kendoGrid({
+
+        dataSource: {
+            data: data,
+            pageSize: 20
+        },
+
+        height: "100%",
+
+        scrollable: true,
+
+        sortable: true,
+
+        pageable: {
+            pageSizes: [20, 50, 100],
+            refresh: true
+        },
+
+        selectable: "row",
+
+change: function () {
+
+        var item = this.dataItem(this.select());
+
+        if (!item)
+            return;
+
+        currentFolderId = item.id;
+        currentFolderName = item.name;
+
+    },
+
+        columns: [
+
+            {
+                field: "name",
+                title: "Name",
+                width: 280,
+                template: function (item) {
+
+                    return `
+                        <div class="row-name">
+                            <span class="k-icon ${item.type === "Folder" ? "k-i-folder type-folder" : "k-i-file type-file"}"></span>
+                            <span>${item.name}</span>
+                        </div>
+                    `;
+                }
+            },
+
+            {
+                field: "type",
+                title: "Type",
+                width: 140,
+                template: function (item) {
+                    var type = (item.type || "").toLowerCase();
+                    var cssClass = type === "folder" ? "folder" : "file";
+                    return `<span class="type-badge ${cssClass}">${item.type || "-"}</span>`;
+                }
+            },
+
+            {
+                field: "path",
+                title: "Path",
+                width: 360,
+                template: function (item) {
+                    return `<span class="row-path">${item.path || "-"}</span>`;
+                }
+            },
+
+            {
+                title: "Actions",
+                width: 90,
+                template: `
+                    <button class="row-actions-btn"
+                            data-id="#=id#">
+                        <span class="k-icon k-i-more-vertical"></span>
+                    </button>
+                `
+            }
+
+        ]
+
+    });
+var grid = $("#contentGrid").data("kendoGrid");
+
+grid.tbody.off("dblclick.workspace").on("dblclick.workspace", "tr", function () {
+
+    var item = grid.dataItem(this);
+
+    if (!item || item.type !== "Folder")
+        return;
+
+    currentFolderId = item.id;
+    currentFolderName = item.name;
+
+    setContentTitle(currentFolderName);
+
+    expandFolderInTree(item.id);
+
+    loadFolderContents(currentGroupId, item.id);
+    });
+}
+
+/*==========================
+    Folder / file actions
+==========================*/
+
+function handleFolderAction(action, id) {
+
+    switch (action) {
+
+        case "addChild":
+            promptForName("Create Child Folder", "Folder name", function (name) {
+                createFolder(currentGroupId, id, name);
+            });
+            break;
+
+        case "upload":
+            uploadFileTo(id);
+            break;
+
+        case "rename":
+            promptForName("Rename Folder", "New name", function (name) {
+                renameFolder(id, name);
+            });
+            break;
+
+        case "move":
+            kendo.alert("Choose a destination folder in the tree, then confirm the move. (Hook up a folder picker here.)");
+            break;
+
+        case "copy":
+            kendo.alert("Choose a destination folder to copy into. (Hook up a folder picker here.)");
+            break;
+
+        case "download":
+            window.location.href = "/workspace/download/" + id;
+            break;
+
+        case "share":
+            kendo.alert("Sharing & permissions dialog goes here.");
+            break;
+
+        case "details":
+            kendo.alert("Folder properties (owner, created date, size) go here.");
+            break;
+
+        case "trash":
+            kendo.confirm("Move this item to Trash?").then(function () {
+                trashFolder(id);
+            });
+            break;
+    }
+}
+
+function createGroup(name) {
+    $.ajax({
+        url: "/workspace/groups",
+        type: "POST",
+        data: { groupName: name },
+        success: function () { location.reload(); },
+        error: function () { alert("Unable to create group."); }
+    });
+}
+
+function createFolder(groupId, parentId, name) {
+    $.ajax({
+        url: "/workspace/folders",
+        type: "POST",
+        data: { groupId: groupId, parentId: parentId, name: name },
+        success: function () {
+            loadFolderTree(groupId);
+            loadFolderContents(groupId, currentFolderId);
+        },
+        error: function () { alert("Unable to create folder."); }
+    });
+}
+
+function renameFolder(id, name) {
+    $.ajax({
+        url: "/workspace/folders/rename",
+        type: "POST",
+        data: { id: id, name: name },
+        success: function () {
+            loadFolderTree(currentGroupId);
+            loadFolderContents(currentGroupId, currentFolderId);
+        },
+        error: function () { alert("Unable to rename folder."); }
+    });
+}
+
+function trashFolder(id) {
+    $.ajax({
+        url: "/workspace/folders/trash",
+        type: "POST",
+        data: { id: id },
+        success: function () {
+            loadFolderTree(currentGroupId);
+            loadFolderContents(currentGroupId, currentFolderId);
+        },
+        error: function () { alert("Unable to move folder to trash."); }
+    });
+}
+
+function uploadFileTo(folderId) {
+    var $input = $('<input type="file" style="display:none" multiple />').appendTo("body");
+    $input.on("change", function () {
+        var files = this.files;
+        if (!files.length) { return; }
+
+        var formData = new FormData();
+        formData.append("groupId", currentGroupId);
+        formData.append("folderId", folderId);
+        for (var i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        kendo.ui.progress($("#contentGrid"), true);
+
+        $.ajax({
+            url: "/workspace/upload",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function () {
+                loadFolderContents(currentGroupId, currentFolderId);
+            },
+            error: function () {
+                alert("Unable to upload file(s).");
+            },
+            complete: function () {
+                kendo.ui.progress($("#contentGrid"), false);
+                $input.remove();
+            }
+        });
+    });
+
+    $input.trigger("click");
+}
+function expandFolderInTree(folderId) {
+
+    if (!treeviewWidget)
+        return;
+
+    var node = findTreeNode(folderId);
+
+    if (!node)
+        return;
+
+    // Collapse all expanded nodes first
+    $("#folderTree .k-item.k-expanded").each(function () {
+
+        treeviewWidget.collapse(this);
+
+    });
+
+    // Expand the complete parent path
+    $(node).parents(".k-item").each(function () {
+
+        treeviewWidget.expand(this);
+
+    });
+
+    // Expand selected node
+    treeviewWidget.expand(node);
+
+    // Select selected node
+    treeviewWidget.select(node);
+
+}
+function findTreeNode(folderId) {
+
+    var result = null;
+
+    $("#folderTree .k-item").each(function () {
+
+        var dataItem = treeviewWidget.dataItem(this);
+
+        if (dataItem && dataItem.id == folderId) {
+
+            result = this;
+
+            return false;
+
+        }
+
+    });
+
+    return result;
+
+}
+</script>
+}

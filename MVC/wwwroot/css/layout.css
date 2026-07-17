@@ -1,0 +1,1521 @@
+/* ==========================================================
+   DocStore Layout
+   Matches the DocStore landing page: indigo/violet/sky gradient
+   brand, Inter type, soft indigo-tinted shadows.
+   Part 1 - Foundation, Variables, Sidebar & Main Layout
+   ==========================================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/*==========================
+    Root Variables
+==========================*/
+
+:root {
+
+    --sidebar-width: 270px;
+    --sidebar-collapsed-width: 72px;
+
+    --topbar-height: 72px;
+
+    /* Brand — same trio as the landing page */
+    --brand-1: #4f46e5;   /* indigo */
+    --brand-2: #0ea5e9;   /* sky */
+    --brand-3: #7c3aed;   /* violet */
+
+    --ink: #1a1d2e;
+    --muted: #656d82;
+    --line: rgba(30,34,51,.08);
+
+    /* Sidebar — the landing page's dark CTA-banner gradient, reused as app chrome */
+    --sidebar-bg: linear-gradient(165deg, #22245c 0%, #34257c 100%);
+    --sidebar-hover: rgba(255,255,255,.07);
+    --sidebar-active: rgba(255,255,255,.12);
+    --sidebar-border: rgba(255,255,255,.10);
+    --sidebar-text: rgba(255,255,255,.72);
+
+    --accent: var(--brand-1);
+    --accent-hover: #4338ca;
+    --accent-soft: rgba(79,70,229,.1);
+
+    --teal: #06d6a0;
+    --teal-soft: rgba(6,214,160,.12);
+
+    --danger: #ff6b6b;
+    --danger-soft: rgba(255,107,107,.12);
+
+    --body-bg: #f5f6fb;
+    --card-bg: #ffffff;
+
+    --text-dark: var(--ink);
+    --text-light: var(--muted);
+    --text-faint: #9195a8;
+
+    --border-color: var(--line);
+
+    --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-display: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+    --shadow-sm: 0 4px 14px rgba(23,24,58,.06);
+    --shadow-md: 0 14px 34px rgba(23,24,58,.10);
+    --shadow-lg: 0 30px 70px rgba(23,24,58,.16);
+
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-pill: 999px;
+
+    --transition: all .2s ease;
+
+}
+
+
+/*==========================
+    Reset
+==========================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    height:100%;
+}
+
+body{
+
+    height:100%;
+
+    background:var(--body-bg);
+
+    font-family:var(--font-body);
+
+    overflow:hidden;
+
+    color:var(--text-dark);
+
+    -webkit-font-smoothing:antialiased;
+
+}
+
+a{
+    text-decoration:none;
+}
+
+ul{
+    list-style:none;
+}
+
+:focus-visible{
+    outline:2px solid var(--brand-1);
+    outline-offset:2px;
+}
+
+
+/*==========================
+    Layout
+==========================*/
+
+.app-container{
+
+    display:flex;
+
+    height:100vh;
+
+    width:100%;
+
+}
+
+.main-container{
+
+    display:flex;
+
+    flex-direction:column;
+
+    flex:1;
+
+    margin-left:var(--sidebar-width);
+
+    transition:var(--transition);
+
+    overflow:hidden;
+
+}
+
+.content{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:28px;
+
+}
+
+
+/*==========================
+    Sidebar
+==========================*/
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:var(--sidebar-width);
+
+    height:100vh;
+
+    background:var(--sidebar-bg);
+
+    color:white;
+
+    display:flex;
+
+    flex-direction:column;
+
+    transition:var(--transition);
+
+    z-index:1000;
+
+    box-shadow:var(--shadow-md);
+
+}
+
+
+/*==========================
+    Sidebar Header
+==========================*/
+
+.sidebar-header{
+
+    height:var(--topbar-height);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-bottom:1px solid var(--sidebar-border);
+
+}
+
+.logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.logo-image{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:11px;
+
+    object-fit:cover;
+
+}
+
+.logo-text{
+
+    font-family:var(--font-display);
+
+    font-size:21px;
+
+    font-weight:800;
+
+    letter-spacing:-.02em;
+
+}
+
+
+/*==========================
+    Sidebar Menu
+==========================*/
+
+.sidebar-menu{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:20px 0;
+
+}
+
+.menu-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:3px;
+
+}
+
+.menu-item{
+
+    margin:0 10px;
+
+    position:relative;
+
+}
+
+.menu-item a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    color:var(--sidebar-text);
+
+    padding:11px 16px;
+
+    border-radius:var(--radius-sm);
+
+    transition:var(--transition);
+
+    font-size:14.5px;
+
+    font-weight:500;
+
+}
+
+.menu-item a:hover{
+
+    background:var(--sidebar-hover);
+
+    color:white;
+
+}
+
+.menu-item.active a{
+
+    background:linear-gradient(135deg, rgba(79,70,229,.55), rgba(124,58,237,.4));
+
+    color:white;
+
+    box-shadow:0 6px 18px rgba(20,20,60,.25);
+
+}
+
+/* signature: sky accent tab on the active item, echoes the gradient-word accent on the hero */
+.menu-item.active::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-10px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:3px;
+
+    height:20px;
+
+    border-radius:0 3px 3px 0;
+
+    background:var(--brand-2);
+
+}
+
+.menu-item .k-svg-icon,
+.menu-item .k-icon{
+
+    font-size:19px;
+
+    min-width:19px;
+
+    color:rgba(255,255,255,.55);
+
+}
+
+.menu-item a:hover .k-svg-icon,
+.menu-item a:hover .k-icon,
+.menu-item.active .k-svg-icon,
+.menu-item.active .k-icon{
+
+    color:#fff;
+
+}
+
+.menu-text{
+
+    white-space:nowrap;
+
+}
+
+
+/*==========================
+    Sidebar Footer
+==========================*/
+
+.sidebar-footer{
+
+    padding:16px;
+
+    border-top:1px solid var(--sidebar-border);
+
+}
+
+.sidebar-footer .k-button{
+
+    color:var(--sidebar-text);
+
+    border-radius:var(--radius-sm) !important;
+
+}
+
+.sidebar-footer .k-button:hover{
+
+    background:var(--sidebar-hover);
+
+    color:white;
+
+}
+
+
+/*==========================
+    Collapse Mode
+==========================*/
+
+.sidebar.collapsed{
+
+    width:var(--sidebar-collapsed-width);
+
+}
+
+.sidebar.collapsed .logo-text{
+
+    display:none;
+
+}
+
+.sidebar.collapsed .menu-text{
+
+    display:none;
+
+}
+
+.sidebar.collapsed .logo{
+
+    justify-content:center;
+
+}
+
+.sidebar.collapsed .menu-item a{
+
+    justify-content:center;
+
+}
+
+.sidebar.collapsed .menu-item{
+
+    margin:0 8px;
+
+}
+
+.main-container.expanded{
+
+    margin-left:var(--sidebar-collapsed-width);
+
+}
+
+
+/*==========================
+    Scrollbar
+==========================*/
+
+.sidebar-menu::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb{
+
+    background:rgba(255,255,255,.18);
+
+    border-radius:20px;
+
+}
+
+.sidebar-menu::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.content::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.content::-webkit-scrollbar-thumb{
+
+    background:#d7d9ea;
+
+    border-radius:20px;
+
+}
+
+
+/*==========================
+    Common Cards
+==========================*/
+
+.page-card{
+
+    background:var(--card-bg);
+
+    border-radius:var(--radius-md);
+
+    padding:26px;
+
+    box-shadow:var(--shadow-sm);
+
+    border:1px solid var(--border-color);
+
+}
+
+.page-title{
+
+    font-family:var(--font-display);
+
+    font-size:27px;
+
+    font-weight:800;
+
+    letter-spacing:-.03em;
+
+    margin-bottom:26px;
+
+}
+
+.section-title{
+
+    font-family:var(--font-display);
+
+    font-size:18px;
+
+    font-weight:700;
+
+    letter-spacing:-.01em;
+
+    margin-bottom:18px;
+
+}
+
+/* ==========================================================
+   Part 2 - Topbar & Profile Dropdown
+   ==========================================================*/
+
+
+/*==========================
+    Topbar
+==========================*/
+
+.topbar{
+
+    height:var(--topbar-height);
+
+    background:rgba(255,255,255,.85);
+
+    backdrop-filter:blur(14px);
+
+    border-bottom:1px solid var(--border-color);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 28px;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:900;
+
+}
+
+.topbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.topbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+.breadcrumb-container{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.breadcrumb-label{
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+}
+
+.app-breadcrumb{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    flex-wrap:wrap;
+}
+
+.app-breadcrumb li{
+    display:flex;
+    align-items:center;
+    color:var(--text-light);
+    font-size:14px;
+    font-weight:500;
+}
+
+.app-breadcrumb li:not(:last-child)::after{
+    content:"/";
+    margin-left:8px;
+    color:#d3d5e6;
+}
+
+.app-breadcrumb li.active{
+    color:var(--text-dark);
+    font-weight:700;
+}
+
+.app-breadcrumb a{
+    color:var(--text-light);
+    text-decoration:none;
+    transition:var(--transition);
+}
+
+.app-breadcrumb a:hover{
+    color:var(--brand-1);
+}
+
+#sidebarToggle{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:var(--radius-sm);
+
+    color:var(--text-dark);
+
+}
+
+#sidebarToggle:hover{
+
+    background:var(--accent-soft);
+
+    color:var(--brand-1);
+
+}
+
+
+/*==========================
+    Notification Button
+==========================*/
+
+#notificationBtn{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:var(--radius-sm);
+
+    position:relative;
+
+    color:var(--text-dark);
+
+}
+
+#notificationBtn:hover{
+
+    background:var(--accent-soft);
+
+}
+
+#notificationBtn .k-icon{
+    font-size:19px;
+    color:var(--text-dark);
+}
+
+.notification-badge{
+
+    position:absolute;
+
+    top:4px;
+
+    right:4px;
+
+    width:17px;
+
+    height:17px;
+
+    border-radius:50%;
+
+    background:var(--danger);
+
+    color:#fff;
+
+    font-size:10px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:700;
+
+    border:2px solid var(--card-bg);
+
+}
+
+
+/*==========================
+    Profile
+==========================*/
+
+.profile-wrapper{
+
+    position:relative;
+
+}
+
+.profile-button{
+
+    border:none;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    padding:0;
+
+    border-radius:50%;
+
+    transition:var(--transition);
+
+}
+
+.profile-button:hover{
+
+    box-shadow:0 0 0 3px var(--accent-soft);
+
+}
+
+.profile-image{
+
+    width:42px;
+
+    height:42px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:2px solid var(--border-color);
+
+    display:block;
+
+}
+
+.profile-avatar{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    background:linear-gradient(135deg, var(--brand-1), var(--brand-3));
+
+    color:#fff;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:700;
+
+    font-size:16px;
+
+}
+
+
+/*==========================
+    Dropdown
+==========================*/
+
+.profile-dropdown{
+
+    position:absolute;
+
+    top:56px;
+
+    right:0;
+
+    width:320px;
+
+    background:var(--card-bg);
+
+    border-radius:var(--radius-md);
+
+    box-shadow:var(--shadow-lg);
+
+    border:1px solid var(--border-color);
+
+    overflow:hidden;
+
+    display:none;
+
+    z-index:9999;
+
+}
+
+.profile-header{
+
+    padding:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    background:linear-gradient(135deg, rgba(79,70,229,.08), rgba(14,165,233,.08));
+
+}
+
+.profile-image-large{
+
+    width:64px;
+
+    height:64px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid var(--card-bg);
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+.profile-avatar-large{
+
+    width:64px;
+
+    height:64px;
+
+    border-radius:50%;
+
+    background:linear-gradient(135deg, var(--brand-1), var(--brand-3));
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:25px;
+
+    font-weight:700;
+
+    border:3px solid var(--card-bg);
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+.profile-details{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+.profile-details h6{
+
+    margin:0;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    color:var(--text-dark);
+
+}
+
+.profile-details span{
+
+    display:block;
+
+    margin-top:3px;
+
+    font-size:12.5px;
+
+    color:var(--text-light);
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+}
+
+
+/*==========================
+    Role
+==========================*/
+
+.role-section{
+
+    padding:16px 20px;
+
+}
+
+.role-section label{
+
+    display:block;
+
+    font-size:11.5px;
+
+    font-weight:700;
+
+    letter-spacing:.03em;
+
+    text-transform:uppercase;
+
+    color:var(--text-faint);
+
+    margin-bottom:8px;
+
+}
+
+.role-section .k-dropdownlist,
+.role-section .k-picker{
+    width:100%;
+}
+
+
+/*==========================
+    Dropdown Menu
+==========================*/
+
+.dropdown-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+    padding:12px 20px;
+
+    color:var(--text-dark);
+
+    transition:var(--transition);
+
+    font-weight:500;
+
+    font-size:14px;
+
+}
+
+.dropdown-item:hover{
+
+    background:var(--accent-soft);
+
+    color:var(--brand-1);
+
+}
+
+.dropdown-item .k-svg-icon{
+
+    font-size:17px;
+
+    color:var(--text-light);
+
+}
+
+.dropdown-item:hover .k-svg-icon{
+
+    color:var(--brand-1);
+
+}
+
+.logout{
+
+    color:var(--danger);
+
+}
+
+.logout:hover{
+
+    background:var(--danger-soft);
+
+    color:var(--danger);
+
+}
+
+.logout:hover .k-svg-icon{
+
+    color:var(--danger);
+
+}
+
+
+/*==========================
+    Divider
+==========================*/
+
+.profile-dropdown hr{
+
+    margin:0;
+
+    border:none;
+
+    border-top:1px solid var(--border-color);
+
+}
+/* ==========================================================
+   Part 3 - Responsive, Kendo Overrides, Utilities & Animations
+   ==========================================================*/
+
+
+/*==========================
+    Main Content
+==========================*/
+
+.content{
+
+    animation:fadeIn .25s ease;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce){
+
+    .content{ animation:none; }
+    .menu-item{ transition:none; }
+    .dashboard-card{ transition:none; }
+
+}
+
+
+/*==========================
+    Dashboard Cards
+==========================*/
+
+.dashboard-card{
+
+    background:var(--card-bg);
+
+    border-radius:var(--radius-md);
+
+    padding:24px;
+
+    box-shadow:var(--shadow-sm);
+
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+
+    border:1px solid var(--border-color);
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:var(--shadow-md);
+
+    border-color:rgba(79,70,229,.25);
+
+}
+
+.dashboard-card-title{
+
+    color:var(--text-light);
+
+    font-size:13.5px;
+
+    font-weight:500;
+
+    margin-bottom:10px;
+
+}
+
+.dashboard-card-value{
+
+    font-family:var(--font-display);
+
+    font-size:32px;
+
+    font-weight:800;
+
+    letter-spacing:-.02em;
+
+    background:linear-gradient(135deg, var(--brand-1), var(--brand-2));
+
+    -webkit-background-clip:text;
+
+    background-clip:text;
+
+    color:transparent;
+
+}
+
+.dashboard-card-icon{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:linear-gradient(135deg, rgba(79,70,229,.12), rgba(14,165,233,.12));
+
+    color:var(--brand-1);
+
+    font-size:19px;
+
+    transition:transform .25s ease;
+
+}
+
+.dashboard-card:hover .dashboard-card-icon{
+
+    transform:scale(1.08) rotate(-4deg);
+
+}
+
+
+/*==========================
+    Tables
+==========================*/
+
+.table-card{
+
+    background:var(--card-bg);
+
+    border-radius:var(--radius-md);
+
+    box-shadow:var(--shadow-sm);
+
+    border:1px solid var(--border-color);
+
+    overflow:hidden;
+
+}
+
+
+/*==========================
+    Kendo Grid
+==========================*/
+
+.k-grid{
+
+    border:none !important;
+
+    border-radius:var(--radius-md);
+
+    font-family:var(--font-body);
+
+}
+
+.k-grid-header{
+
+    background:#f7f7fc;
+
+}
+
+.k-grid-header th{
+
+    font-weight:700;
+
+    color:var(--text-dark);
+
+}
+
+.k-grid tbody tr:hover{
+
+    background:rgba(79,70,229,.04);
+
+}
+
+
+/*==========================
+    Kendo Button
+==========================*/
+
+.k-button{
+
+    border-radius:var(--radius-sm) !important;
+
+}
+
+.k-button-solid-primary{
+
+    background:linear-gradient(135deg, var(--brand-1), var(--brand-3));
+
+    border-color:var(--brand-1);
+
+    border-radius:var(--radius-pill) !important;
+
+    box-shadow:0 10px 22px rgba(79,70,229,.28);
+
+    font-weight:600;
+
+    transition:transform .18s ease, box-shadow .18s ease;
+
+}
+
+.k-button-solid-primary:hover{
+
+    background:linear-gradient(135deg, #4338ca, #6d28d9);
+
+    border-color:#4338ca;
+
+    transform:translateY(-1px);
+
+    box-shadow:0 14px 28px rgba(79,70,229,.34);
+
+}
+
+
+/*==========================
+    Kendo Textbox
+==========================*/
+
+.k-input-inner{
+
+    border-radius:var(--radius-sm);
+
+}
+
+
+/*==========================
+    Kendo Dropdown
+==========================*/
+
+.k-picker{
+
+    border-radius:var(--radius-sm);
+
+}
+
+
+/*==========================
+    Forms
+==========================*/
+
+.form-card{
+
+    background:var(--card-bg);
+
+    border-radius:var(--radius-md);
+
+    padding:26px;
+
+    box-shadow:var(--shadow-sm);
+
+    border:1px solid var(--border-color);
+
+}
+
+.form-title{
+
+    font-family:var(--font-display);
+
+    font-size:22px;
+
+    font-weight:800;
+
+    letter-spacing:-.02em;
+
+    margin-bottom:26px;
+
+}
+
+
+/*==========================
+    Utilities
+==========================*/
+
+.cursor-pointer{
+
+    cursor:pointer;
+
+}
+
+.rounded-xl{
+
+    border-radius:var(--radius-lg);
+
+}
+
+.shadow-sm{
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+.shadow-md{
+
+    box-shadow:var(--shadow-md);
+
+}
+
+.shadow-lg{
+
+    box-shadow:var(--shadow-lg);
+
+}
+
+.bg-white{
+
+    background:var(--card-bg);
+
+}
+
+.text-primary{
+
+    color:var(--brand-1);
+
+}
+
+.text-muted{
+
+    color:var(--text-light);
+
+}
+
+.fw-600{
+
+    font-weight:600;
+
+}
+
+.fw-700{
+
+    font-weight:700;
+
+}
+
+
+/*==========================
+    Sidebar Animation
+==========================*/
+
+.menu-item{
+
+    transition:var(--transition);
+
+}
+
+.menu-item:hover{
+
+    transform:translateX(3px);
+
+}
+
+
+/*==========================
+    Responsive
+==========================*/
+
+@media (max-width:1200px){
+
+    .breadcrumb-container{
+        max-width:420px;
+    }
+
+}
+
+@media (max-width:992px){
+
+    .sidebar{
+
+        transform:translateX(-100%);
+
+    }
+
+    .sidebar.show{
+
+        transform:translateX(0);
+
+    }
+
+    .main-container{
+
+        margin-left:0;
+
+    }
+
+    .breadcrumb-container{
+        max-width:240px;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .topbar{
+
+        padding:0 16px;
+
+    }
+
+    .content{
+
+        padding:16px;
+
+    }
+
+    .profile-dropdown{
+
+        width:300px;
+
+    }
+
+}
+
+@media (max-width:576px){
+
+    .profile-dropdown{
+
+        width:280px;
+
+        right:-20px;
+
+    }
+
+    .dashboard-card{
+
+        padding:18px;
+
+    }
+
+    .dashboard-card-value{
+
+        font-size:26px;
+
+    }
+
+}
+
+
+/*==========================
+    Loading Overlay
+==========================*/
+
+.loading-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(245,246,251,.8);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:99999;
+
+}
+
+
+/*==========================
+    Footer
+==========================*/
+
+.app-footer{
+
+    padding:15px 25px;
+
+    text-align:center;
+
+    color:var(--text-faint);
+
+    font-size:12.5px;
+
+}

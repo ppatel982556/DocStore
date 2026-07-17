@@ -1,0 +1,59 @@
+@model Repositories.Models.ViewModels.LayoutVM
+
+@{
+    var pageTitle = (ViewData["Title"]?.ToString() ?? "Dashboard").Trim();
+    var path = ViewContext.HttpContext.Request.Path.Value?.Trim('/') ?? string.Empty;
+    var crumbs = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+}
+
+<div class="topbar-left">
+
+    <button id="sidebarToggle"
+            class="k-button k-button-flat k-button-flat-base">
+
+        <span class="k-svg-icon k-svg-i-menu"></span>
+
+    </button>
+
+    <div class="breadcrumb-container">
+        <div class="breadcrumb-label">Workspace</div>
+        <nav aria-label="breadcrumb">
+            <ol class="app-breadcrumb">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">Home</a>
+                </li>
+                @for (var i = 0; i < crumbs.Length; i++)
+                {   
+                    var crumbText = i == crumbs.Length - 1
+                        ? pageTitle
+                        : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(crumbs[i].Replace("-", " "));
+                    <li class="@(i == crumbs.Length - 1 ? "active" : string.Empty)">
+                        @crumbText
+                    </li>
+                }
+                @if (crumbs.Length == 0)
+                {
+                    <li class="active">@pageTitle</li>
+                }
+            </ol>
+        </nav>
+    </div>
+
+</div>
+
+<div class="topbar-right">
+
+    <button id="notificationBtn"
+            class="k-button k-button-flat k-button-flat-base position-relative">
+
+        <span class="k-icon k-font-icon k-i-bell"></span>
+
+        <span class="notification-badge">
+            @Model.NotificationCount
+        </span>
+
+    </button>
+
+    @await Html.PartialAsync("_ProfileDropdown", Model)
+
+</div>

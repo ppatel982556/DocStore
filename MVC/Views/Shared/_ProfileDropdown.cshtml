@@ -1,0 +1,123 @@
+@model Repositories.Models.ViewModels.LayoutVM
+
+@{
+    var user = Model.User;
+}
+
+<div class="profile-wrapper">
+
+    <button id="profileMenuBtn"
+            class="profile-button">
+
+        @if (!string.IsNullOrWhiteSpace(user.ProfileImageUrl))
+        {
+            <img src="@user.ProfileImageUrl"
+                 class="profile-image"
+                 alt="@user.FirstName" />
+        }
+        else
+        {
+            <div class="profile-avatar">
+                @user.Initial
+            </div>
+        }
+
+    </button>
+
+    <div id="profileMenu"
+         class="profile-dropdown">
+
+        <div class="profile-header">
+
+            @if (!string.IsNullOrWhiteSpace(user.ProfileImageUrl))
+            {
+                <img src="@user.ProfileImageUrl"
+                     class="profile-image-large" />
+            }
+            else
+            {
+                <div class="profile-avatar-large">
+                    @user.Initial
+                </div>
+            }
+
+            <div class="profile-details">
+
+                <h6>
+                    @user.FirstName @user.LastName
+                </h6>
+
+                <span>
+                    @user.Email
+                </span>
+
+            </div>
+
+        </div>
+
+        <hr />
+
+        <div class="role-section">
+
+            <label>
+                Active Role
+            </label>
+
+            <select id="roleDropdown">
+                @foreach (var role in Model.Roles)
+                {
+                    <option value="@role.RoleId" selected="@(role.RoleId == user.ActiveRoleId)">
+                        @role.RoleName
+                    </option>
+                }
+            </select>
+
+        </div>
+
+        <hr />
+
+        <a asp-controller="User"
+           asp-action="Profile"
+           class="dropdown-item">
+
+            <span class="k-svg-icon k-svg-i-user"></span>
+
+            Edit Profile
+
+        </a>
+
+        <a asp-controller="User"
+           asp-action="ChangePassword"
+           class="dropdown-item">
+
+            <span class="k-svg-icon k-svg-i-lock"></span>
+
+            Change Password
+
+        </a>
+
+        <a asp-controller="Settings"
+           asp-action="Index"
+           class="dropdown-item">
+
+            <span class="k-svg-icon k-svg-i-gear"></span>
+
+            Settings
+
+        </a>
+
+        <hr />
+
+        <a asp-controller="Auth"
+           asp-action="Logout"
+           class="dropdown-item logout">
+
+            <span class="k-svg-icon k-svg-i-logout"></span>
+
+            Logout
+
+        </a>
+
+    </div>
+
+</div>

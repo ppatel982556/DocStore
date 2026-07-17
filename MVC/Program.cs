@@ -8,6 +8,9 @@ using Repositories.Services.EmailService;
 using Services.EmailService;
 using Repositories.Models;
 using Repositories.Services.CloudinaryService;
+using Repositories.Services.UserService;
+using Repositories.Services.LayoutService;
+using Repositories.Services.WorkspaceService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,14 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordResetInterface, PasswordResetRepository>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<IUserInterface, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleInterface, RoleRepository>();
+builder.Services.AddScoped<IPageInterface, PageRepository>();
+builder.Services.AddScoped<IRolePermissionInterface, RolePermissionRepository>();
+builder.Services.AddScoped<ILayoutService, LayoutService>();
+builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
+builder.Services.AddScoped<IWorkspaceInterface, WorkspaceRepository>();
 
 builder.Services.AddSession(option =>
 {
