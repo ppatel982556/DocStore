@@ -1,0 +1,431 @@
+@model List<Repositories.Models.ViewModels.RecycleBin.RecycleBinItemVM>
+
+@{
+    ViewData["Title"] = "Recycle Bin";
+}
+
+<style>
+    .recycle-page {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        height: 100%;
+    }
+
+    .recycle-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .recycle-header h3 {
+        font-family: var(--font-display);
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .recycle-header .text-muted {
+        font-size: 14px;
+        color: var(--text-light);
+    }
+
+    .recycle-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background: rgba(255,255,255,.72);
+    }
+
+    .recycle-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        color: var(--text-light);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .recycle-breadcrumb strong {
+        color: var(--text-dark);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .recycle-grid-shell {
+        flex: 1;
+        min-height: 0;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        background: var(--card-bg);
+        box-shadow: var(--shadow-sm);
+    }
+
+    #recycleGrid {
+        height: 100%;
+    }
+
+    .recycle-name {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+    }
+
+    .recycle-name .k-icon {
+        color: var(--brand-1);
+        font-size: 18px;
+    }
+
+    .type-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: var(--radius-pill);
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    .type-pill.group,
+    .type-pill.folder {
+        background: rgba(79,70,229,.12);
+        color: var(--brand-1);
+    }
+
+    .type-pill.file {
+        background: rgba(154,161,177,.16);
+        color: #6b7280;
+    }
+
+    .recycle-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .recycle-actions .k-button {
+        white-space: nowrap;
+    }
+</style>
+
+<div class="recycle-page">
+    <div class="recycle-header">
+        <div>
+            <h3>
+                <span class="k-icon k-font-icon k-i-trash"></span>
+                Recycle Bin
+            </h3>
+            <span class="text-muted">
+                Restore deleted groups, folders and files, or permanently remove them.
+            </span>
+        </div>
+    </div>
+
+    <div class="recycle-nav">
+        <button id="recycleBackBtn" class="k-button k-button-solid-base" disabled>
+            <span class="k-icon k-i-arrow-left"></span>
+            Back
+        </button>
+
+        <div class="recycle-breadcrumb">
+            <span class="k-icon k-font-icon k-i-folder-open"></span>
+            <strong id="recycleLocation">Recycle Bin</strong>
+        </div>
+    </div>
+
+    <div class="recycle-grid-shell">
+        <div id="recycleGrid"></div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+<script>
+    var recycleRootItems = normalizeRecycleItems(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model)));
+    var recyclePathStack = [];
+
+    $(function () {
+        buildRecycleGrid(recycleRootItems);
+
+        $("#recycleBackBtn").on("click", function () {
+            if (!recyclePathStack.length) {
+                return;
+            }
+
+            recyclePathStack.pop();
+            refreshCurrentRecycleLevel();
+        });
+    });
+
+    function normalizeRecycleItems(items) {
+        return (items || []).map(function (item) {
+            return {
+                id: item.Id ?? item.id,
+                name: item.Name ?? item.name,
+                type: item.Type ?? item.type,
+                groupName: item.GroupName ?? item.groupName,
+                path: item.Path ?? item.path,
+                deletedBy: item.DeletedBy ?? item.deletedBy,
+                deletedAt: item.DeletedAt ?? item.deletedAt,
+                sizeDisplay: item.SizeDisplay ?? item.sizeDisplay,
+                icon: item.Icon ?? item.icon,
+                isFolder: item.IsFolder ?? item.isFolder
+            };
+        });
+    }
+
+    function buildRecycleGrid(items) {
+        var existingGrid = $("#recycleGrid").data("kendoGrid");
+
+        if (existingGrid) {
+            existingGrid.destroy();
+        }
+
+        $("#recycleGrid").empty();
+
+        $("#recycleGrid").kendoGrid({
+            dataSource: {
+                data: items,
+                schema: {
+                    model: {
+                        id: "id"
+                    }
+                },
+                pageSize: 20
+            },
+            height: "100%",
+            sortable: true,
+            filterable: true,
+            resizable: true,
+            pageable: {
+                pageSizes: [20, 50, 100],
+                refresh: true
+            },
+            noRecords: {
+                template: "<div class='empty-panel'><span class='k-icon k-font-icon k-i-trash'></span><p>Recycle Bin is empty.</p></div>"
+            },
+            columns: [
+                {
+                    field: "icon",
+                    title: "",
+                    width: 60,
+                    template: function (item) {
+                        var icon = item.type === "file" ? "k-i-file" : "k-i-folder";
+                        return "<span class='k-icon k-font-icon " + icon + "'></span>";
+                    },
+                    filterable: false,
+                    sortable: false
+                },
+                {
+                    field: "name",
+                    title: "Name",
+                    width: 260,
+                    template: function (item) {
+                        var icon = item.type === "file" ? "k-i-file" : "k-i-folder";
+                        return "<div class='recycle-name'><span class='k-icon k-font-icon " + icon + "'></span><span>" +
+                            kendo.htmlEncode(item.name || "-") +
+                            "</span></div>";
+                    }
+                },
+                {
+                    field: "type",
+                    title: "Type",
+                    width: 110,
+                    template: function (item) {
+                        return "<span class='type-pill " + item.type + "'>" + item.type + "</span>";
+                    }
+                },
+                {
+                    field: "groupName",
+                    title: "Group",
+                    width: 180
+                },
+                {
+                    field: "path",
+                    title: "Original Path",
+                    width: 320
+                },
+                {
+                    field: "deletedBy",
+                    title: "Deleted By",
+                    width: 180
+                },
+                {
+                    field: "deletedAt",
+                    title: "Deleted At",
+                    width: 190,
+                    template: function (item) {
+                        var date = kendo.parseDate(item.deletedAt);
+                        return date ? kendo.toString(date, "dd MMM yyyy hh:mm tt") : "-";
+                    }
+                },
+                {
+                    field: "sizeDisplay",
+                    title: "Size",
+                    width: 120
+                },
+                {
+                    title: "Actions",
+                    width: 250,
+                    attributes: { "class": "text-end" },
+                    headerAttributes: { "class": "text-end" },
+                    template: function (item) {
+                        return `
+                            <div class="recycle-actions">
+                                <button class="k-button k-button-solid-base btn-restore"
+                                        data-id="${item.id}"
+                                        data-type="${item.type}">
+                                    <span class="k-icon k-i-undo"></span>
+                                    Restore
+                                </button>
+
+                                <button class="k-button k-button-solid-error btn-permanent-delete"
+                                        data-id="${item.id}"
+                                        data-type="${item.type}">
+                                    <span class="k-icon k-i-trash"></span>
+                                    Delete Permanently
+                                </button>
+                            </div>`;
+                    },
+                    filterable: false,
+                    sortable: false
+                }
+            ]
+        });
+
+        var grid = $("#recycleGrid").data("kendoGrid");
+
+        grid.tbody.off("dblclick.recycle").on("dblclick.recycle", "tr", function () {
+            var item = grid.dataItem(this);
+
+            if (!item || item.type === "file") {
+                return;
+            }
+
+            openRecycleItem(item);
+        });
+
+        $("#recycleGrid").off("click.recycleRestore").on("click.recycleRestore", ".btn-restore", function () {
+            var id = $(this).data("id");
+            var type = $(this).data("type");
+
+            kendo.confirm("Restore this item?").then(function () {
+                postRecycleAction(
+                    "/recycle-bin/restore",
+                    type,
+                    id);
+            });
+        });
+
+        $("#recycleGrid").off("click.recyclePermanentDelete").on("click.recyclePermanentDelete", ".btn-permanent-delete", function () {
+            var id = $(this).data("id");
+            var type = $(this).data("type");
+
+            kendo.confirm("This action cannot be undone. Permanently delete this item?").then(function () {
+                postRecycleAction(
+                    "/recycle-bin/permanent-delete",
+                    type,
+                    id);
+            });
+        });
+    }
+
+    function openRecycleItem(item) {
+        recyclePathStack.push({
+            id: item.id,
+            type: item.type,
+            name: item.name
+        });
+
+        refreshCurrentRecycleLevel();
+    }
+
+    function refreshCurrentRecycleLevel() {
+        $("#recycleBackBtn").prop("disabled", recyclePathStack.length === 0);
+
+        if (!recyclePathStack.length) {
+            $("#recycleLocation").text("Recycle Bin");
+            buildRecycleGrid(recycleRootItems);
+            return;
+        }
+
+        var current = recyclePathStack[recyclePathStack.length - 1];
+        $("#recycleLocation").text(
+            "Recycle Bin / " + recyclePathStack.map(function (item) {
+                return item.name;
+            }).join(" / "));
+
+        kendo.ui.progress($("#recycleGrid"), true);
+
+        $.ajax({
+            url: "/recycle-bin/children",
+            type: "GET",
+            data: {
+                parentType: current.type,
+                parentId: current.id
+            },
+            success: function (items) {
+                buildRecycleGrid(normalizeRecycleItems(items));
+            },
+            error: function () {
+                kendo.alert("Unable to load deleted folder contents.");
+            },
+            complete: function () {
+                kendo.ui.progress($("#recycleGrid"), false);
+            }
+        });
+    }
+
+    function postRecycleAction(url, type, id) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {
+                type: type,
+                id: id,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function (result) {
+                if (result.success) {
+                    refreshRecycleAfterAction();
+                    return;
+                }
+
+                kendo.alert(result.message);
+            },
+            error: function () {
+                kendo.alert("Unable to complete recycle bin action.");
+            }
+        });
+    }
+
+    function refreshRecycleAfterAction() {
+        $.ajax({
+            url: "/recycle-bin/items",
+            type: "GET",
+            success: function (items) {
+                recycleRootItems = normalizeRecycleItems(items);
+                refreshCurrentRecycleLevel();
+            },
+            error: function () {
+                location.reload();
+            }
+        });
+    }
+</script>
+}

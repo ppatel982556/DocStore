@@ -1,0 +1,159 @@
+@model Repositories.Models.ViewModels.Workspace.WorkspaceVM
+
+<form id="uploadFileForm"
+      enctype="multipart/form-data">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           id="UploadGroupId"
+           name="GroupId" />
+
+    <input type="hidden"
+           id="UploadFolderId"
+           name="FolderId" />
+
+    <div class="form-group mb-3">
+
+        <label class="form-label">
+
+            Folder
+
+        </label>
+
+        <input id="UploadFolderName"
+               class="k-textbox"
+               readonly />
+
+    </div>
+
+    <div class="form-group mb-3">
+
+        <label class="form-label">
+
+            Location
+
+        </label>
+
+        <input id="UploadFolderPath"
+               class="k-textbox"
+               readonly />
+
+    </div>
+
+    <div class="form-group mb-3">
+
+        <label class="form-label">
+
+            Select File
+
+        </label>
+
+        <input id="UploadFile"
+               name="File"
+               type="file"
+               required />
+
+    </div>
+
+    <div class="form-group mb-3">
+
+        <label class="form-label">
+
+            Description
+
+        </label>
+
+        <textarea id="UploadDescription"
+                  name="Description">
+        </textarea>
+
+    </div>
+
+    <div class="form-group mb-4">
+
+        <label class="form-label">
+
+            Assign Roles
+
+        </label>
+
+        <select id="UploadRoles"
+                name="SelectedRoleIds"
+                multiple>
+
+            @foreach (var role in Model.Roles)
+            {
+                <option value="@role.RoleId">
+
+                    @role.RoleName
+
+                </option>
+            }
+
+        </select>
+
+    </div>
+
+    <div class="text-end">
+
+        <button type="button"
+                class="k-button"
+                onclick="uploadWindow.close();">
+
+            Cancel
+
+        </button>
+
+        <button type="submit"
+                class="k-button k-button-solid-primary">
+
+            <span class="k-icon k-i-upload"></span>
+
+            Upload File
+
+        </button>
+
+    </div>
+
+</form>
+
+<script>
+
+    $(function () {
+
+        if (!$("#UploadDescription").data("kendoTextArea")) {
+
+            $("#UploadDescription").kendoTextArea({
+
+                rows: 4
+
+            });
+
+        }
+
+        if (!$("#UploadRoles").data("kendoMultiSelect")) {
+
+            $("#UploadRoles").kendoMultiSelect({
+
+                placeholder: "Select Roles..."
+
+            });
+
+        }
+
+        $("#UploadFile").on("change", function () {
+
+            if (this.files.length > 0) {
+
+                var file = this.files[0];
+
+                console.log(file.name);
+
+            }
+
+        });
+
+    });
+
+</script>

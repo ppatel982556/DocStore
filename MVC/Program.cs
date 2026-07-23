@@ -11,6 +11,10 @@ using Repositories.Services.CloudinaryService;
 using Repositories.Services.UserService;
 using Repositories.Services.LayoutService;
 using Repositories.Services.WorkspaceService;
+using Repositories.Models.Configurations;
+using Repositories.Services.StorageService;
+using Repositories.Services.PermissionService;
+using Repositories.Services.RecycleBinService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +37,11 @@ builder.Services.AddScoped<IRolePermissionInterface, RolePermissionRepository>()
 builder.Services.AddScoped<ILayoutService, LayoutService>();
 builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
 builder.Services.AddScoped<IWorkspaceInterface, WorkspaceRepository>();
+builder.Services.AddScoped<IPermissionInterface,PermissionRepository>();
+builder.Services.AddScoped<IPermissionService,PermissionService>();
+builder.Services.AddScoped<IRecycleBinInterface, RecycleBinRepository>();
+builder.Services.AddScoped<IRecycleBinService, RecycleBinService>();
+
 
 builder.Services.AddSession(option =>
 {
@@ -56,6 +65,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization();
+
+builder.Services.Configure<SupabaseSettings>(
+    builder.Configuration.GetSection("Supabase"));
+
+builder.Services.AddHttpClient<IStorageService, SupabaseStorageService>();
 
 builder.Services.AddScoped<NpgsqlConnection>(conn =>
 {

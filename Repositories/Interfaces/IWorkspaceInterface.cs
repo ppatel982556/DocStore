@@ -10,33 +10,9 @@ namespace Repositories.Interfaces
 {
     public interface IWorkspaceInterface
     {
-        // #region Groups
-
-        // Task<List<Group>> GetGroupsAsync();
-
-        // Task<Group?> GetGroupByIdAsync(long groupId);
-
-        // Task<bool> GroupExistsAsync(string groupName);
-
-        // Task<ServiceResult> CreateGroupAsync(CreateGroupVM model);
-        // Task<bool> UpdateGroupAsync(Group group);
-
-        // Task<bool> DeleteGroupAsync(long groupId, long deletedBy);
-
-        // #endregion
-
-        // #region Group Roles
-
-        // Task<bool> AssignRolesAsync(long groupId, List<long> roleIds);
-
-        // Task<List<long>> GetAssignedRolesAsync(long groupId);
-
-        // Task<bool> RemoveAssignedRolesAsync(long groupId);
-
-        // #endregion
         Task<List<Group>> GetGroupsAsync();
 
-        Task<Group?> GetGroupByIdAsync(long groupId);
+        Task<GroupDetailsVM?> GetGroupByIdAsync(long groupId);
 
         Task<bool> GroupExistsAsync(string groupName);
 
@@ -44,6 +20,25 @@ namespace Repositories.Interfaces
 
         Task<ServiceResult> DeleteGroupAsync(long groupId, long deletedBy);
         Task<List<GroupFolder>> GetFoldersByGroupIdAsync(long groupId);
-        Task<List<GroupFolder>> GetFolderContentsAsync(long groupId,long? parentFolderId);
+        // Task<List<GroupFolder>> GetFolderContentsAsync(long groupId,long? parentFolderId);
+
+        Task<List<FolderContentVM>> GetFolderContentsAsync(long groupId,long? parentFolderId);
+            Task<ServiceResult> UpdateGroupAsync(UpdateGroupVM model);
+        Task<bool> FolderExistsAsync(long groupId,long? parentFolderId,string folderName);
+
+        Task<ServiceResult> CreateFolderAsync(CreateFolderVM model);
+        Task<FolderDetailsVM?> GetFolderByIdAsync(long folderId);
+        Task<ServiceResult> UploadFileAsync(UploadFileVM model);
+        Task<FileDetailsVM?> GetFileByIdAsync(long fileId);
+        Task<ServiceResult> UpdateFileAsync(UpdateFileVM model);
+        Task UpdateObjectKeyAsync(long fileId,string objectKey);
+
+        Task DeleteFileAsync(long fileId);
+        Task RollbackFileAsync(long fileId);
+        Task<ServiceResult> UpdateFolderAsync(UpdateFolderVM model);
+        Task<List<MoveDestinationNodeVM>> GetMoveDestinationsAsync(string itemType, long itemId);
+        Task<MovePermissionAnalysisVM> AnalyzeMovePermissionsAsync(MoveItemVM model);
+        Task<ServiceResult> MoveFileAsync(MoveItemVM model);
+        Task<ServiceResult> MoveFolderAsync(MoveItemVM model);
     }
 }

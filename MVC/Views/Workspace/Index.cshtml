@@ -551,22 +551,24 @@
 
         flex:1;
 
-        min-height:0;
+        height:100%;
 
     }
 
-    #contentGrid .k-grid-content{
+ 
+#contentGrid .k-grid-header{
+    overflow:hidden !important;
+}
 
-        overflow:auto;
+#contentGrid .k-grid-header-wrap{
+    overflow:hidden !important;
+}
 
-    }
+#contentGrid .k-grid-content{
+    overflow:auto !important;
+}
 
-    #contentGrid .k-grid-header-wrap,
-    #contentGrid .k-grid-content table{
 
-        min-width:900px;
-
-    }
 
     #contentGrid .k-grid-header{
 
@@ -615,6 +617,7 @@
         background:rgba(79,70,229,.08);
 
     }
+ 
 
     #contentGrid .k-grid td,
     #contentGrid .k-grid th{
@@ -856,6 +859,163 @@
 
     }
 
+    .move-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .move-grid {
+        display: grid;
+        grid-template-columns: minmax(260px, 1fr) minmax(320px, 1.2fr);
+        gap: 16px;
+    }
+
+    .move-card {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background: var(--card-bg);
+        padding: 14px;
+        min-height: 360px;
+    }
+
+    .move-card h6 {
+        margin: 0 0 6px;
+        font-weight: 800;
+        color: var(--text-dark);
+    }
+
+    .move-help,
+    .move-empty {
+        color: var(--text-light);
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    #moveDestinationTree {
+        max-height: 420px;
+        overflow: auto;
+    }
+
+    .move-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    .move-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        background: rgba(248,250,252,.85);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .move-option input {
+        accent-color: var(--brand-1);
+    }
+
+    .move-analysis {
+        border-top: 1px solid var(--border-color);
+        padding-top: 12px;
+        margin-top: 12px;
+        max-height: 250px;
+        overflow: auto;
+    }
+
+    .move-analysis-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .move-role-list {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 10px;
+        min-height: 86px;
+    }
+
+    .move-role-list strong {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 12px;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .move-role-pill {
+        display: inline-flex;
+        margin: 0 5px 6px 0;
+        padding: 3px 8px;
+        border-radius: var(--radius-pill);
+        background: rgba(79,70,229,.12);
+        color: var(--brand-1);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .move-role-pill.removed {
+        background: rgba(239,68,68,.12);
+        color: #b91c1c;
+    }
+
+    .move-stats {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 10px 0;
+        color: var(--text-light);
+        font-size: 13px;
+    }
+
+    .move-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .k-treeview .move-node-disabled {
+        opacity: .45;
+        pointer-events: none;
+    }
+
+    .move-tree-node {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 2px 6px;
+        border-radius: var(--radius-sm);
+    }
+
+    .move-tree-node.group {
+        background: rgba(79,70,229,.13);
+        color: var(--brand-1);
+        font-weight: 800;
+    }
+
+    .move-tree-node.folder {
+        color: var(--text-dark);
+    }
+
+    .move-option-note {
+        display: inline-flex;
+        margin: 4px 0 10px;
+        padding: 5px 9px;
+        border-radius: var(--radius-pill);
+        background: rgba(14,165,233,.11);
+        color: #0369a1;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
 
     /*==========================
         Responsive
@@ -878,6 +1038,64 @@
         }
 
     }
+
+    .group-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.group-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    flex:1;
+
+}
+
+.group-action-btn{
+
+    width:30px;
+
+    height:30px;
+
+    border:none;
+
+    background:transparent;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:inherit;
+
+}
+
+.group-action-btn:hover{
+
+    background:rgba(255,255,255,.15);
+
+}
+
+.group-card:not(.active) .group-action-btn:hover{
+
+    background:var(--accent-soft);
+
+}
 
 </style>
 
@@ -923,13 +1141,25 @@
                         @foreach (var group in Model.Groups)
                         {
                             <div class="group-card"
-                                 data-id="@group.GroupId">
+     data-id="@group.GroupId">
 
-                                <span class="k-icon k-font-icon k-i-folder"></span>
+    <div class="group-left">
 
-                                @group.GroupName
+        <span class="k-icon k-font-icon k-i-folder"></span>
 
-                            </div>
+        <span>@group.GroupName</span>
+
+    </div>
+
+    <button class="group-action-btn"
+            data-id="@group.GroupId"
+            data-name="@group.GroupName">
+
+        <span class="k-icon k-i-more-vertical"></span>
+
+    </button>
+
+</div>
                         }
 
                     </div>
@@ -1021,31 +1251,298 @@
 <!-- Shared actions popup, reused for every grid row -->
 <div id="actionsPopup" class="actions-menu">
     <ul>
-        <li data-action="addChild"><span class="k-icon k-i-folder-add"></span> Create Child Folder</li>
-        <li data-action="upload"><span class="k-icon k-i-upload"></span> Upload File Here</li>
-        <li data-action="rename"><span class="k-icon k-i-edit"></span> Rename</li>
-        <li data-action="move"><span class="k-icon k-i-arrow-chevron-right"></span> Move To...</li>
-        <li data-action="copy"><span class="k-icon k-i-copy"></span> Copy To...</li>
-        <li data-action="download"><span class="k-icon k-i-download"></span> Download</li>
-        <li data-action="share"><span class="k-icon k-i-share"></span> Share / Permissions</li>
-        <li data-action="details"><span class="k-icon k-i-information"></span> Properties</li>
-        <li class="menu-divider"></li>
-        <li data-action="trash" class="danger"><span class="k-icon k-i-trash"></span> Move to Trash</li>
+        <li data-type="folder" data-action="addChild"><span class="k-icon k-i-folder-add"></span> Create Child Folder</li>
+        <li data-type="folder" data-action="upload"><span class="k-icon k-i-upload"></span> Upload File</li>
+        <li data-type="folder" class="menu-divider"></li>
+        <li data-type="folder" data-action="rename"><span class="k-icon k-i-edit"></span> Rename Folder</li>
+        <li data-type="folder" data-action="move"><span class="k-icon k-i-folder-up"></span> Move Folder</li>
+        <li data-type="folder" data-action="copy"><span class="k-icon k-i-copy"></span> Copy Folder</li>
+        <li data-type="folder" data-action="download"><span class="k-icon k-i-download"></span> Download as ZIP</li>
+        <li data-type="folder" class="menu-divider"></li>
+        <li data-type="folder" data-action="share"><span class="k-icon k-i-share"></span> Share / Permissions</li>
+        <li data-type="folder" data-action="favorite"><span class="k-icon k-i-star-outline"></span> Add to Favorites</li>
+        <li data-type="folder" data-action="details"><span class="k-icon k-i-information"></span> Properties</li>
+        <li data-type="folder" class="menu-divider"></li>
+        <li data-type="folder" data-action="trash" class="danger"><span class="k-icon k-i-trash"></span> Move to Trash</li>
+        <li data-type="file" data-action="preview"><span class="k-icon k-i-eye"></span> Preview</li>
+        <li data-type="file" data-action="download"><span class="k-icon k-i-download"></span> Download</li>
+        <li data-type="file" class="menu-divider"></li>
+        <li data-type="file" data-action="rename"><span class="k-icon k-i-edit"></span> Rename File</li>
+        <li data-type="file" data-action="move"><span class="k-icon k-i-folder-up"></span> Move File</li>
+        <li data-type="file" data-action="copy"><span class="k-icon k-i-copy"></span> Copy File</li>
+        <li data-type="file" class="menu-divider"></li>
+        <li data-type="file" data-action="versions"><span class="k-icon k-i-track-changes"></span> Version History</li>
+        <li data-type="file" data-action="share"><span class="k-icon k-i-share"></span> Share / Permissions</li>
+        <li data-type="file" data-action="favorite"><span class="k-icon k-i-star-outline"></span> Add to Favorites</li>
+        <li data-type="file" data-action="details"><span class="k-icon k-i-information"></span> Properties</li>
+        <li data-type="file" class="menu-divider"></li>
+        <li data-type="file" data-action="trash" class="danger"><span class="k-icon k-i-trash"></span> Move to Trash</li>
     </ul>
 </div>
+<div id="groupActionsPopup" class="actions-menu">
 
+    <ul>
+
+        <li data-action="info">
+
+            <span class="k-icon k-i-information"></span>
+
+            Information
+
+        </li>
+
+        <li data-action="edit">
+
+            <span class="k-icon k-i-edit"></span>
+
+            Update
+
+        </li>
+
+        <li class="menu-divider"></li>
+
+        <li data-action="delete"
+            class="danger">
+
+            <span class="k-icon k-i-trash"></span>
+
+            Move to Trash
+
+        </li>
+
+    </ul>
+
+</div>
+<div id="folderWindow" style="display:none;">
+
+    @await Html.PartialAsync("_CreateFolder", Model)
+
+</div>
+<div id="uploadFileWindow" style="display:none;">
+
+    @await Html.PartialAsync("_UploadFile", Model)
+
+</div>
+
+<div id="moveWindow" style="display:none;">
+    <div class="move-dialog">
+        <div class="move-grid">
+            <section class="move-card">
+                <h6>Destination</h6>
+                <p class="move-help">Select a group root or folder. Files must be moved into a folder.</p>
+                <div id="moveDestinationTree"></div>
+            </section>
+
+            <section class="move-card">
+                <h6>Permission handling</h6>
+                <div id="moveSelectionSummary" class="move-help">Choose a destination to preview permissions.</div>
+
+                <div id="movePermissionOptions" class="move-options">
+                    <label class="move-option same-group-option">
+                        <input type="radio" name="MovePermissionOption" value="keep" checked />
+                        <span>Keep existing permissions</span>
+                    </label>
+                    <label class="move-option same-group-option cross-group-option">
+                        <input type="radio" name="MovePermissionOption" value="inherit" />
+                        <span>Inherit destination permissions</span>
+                    </label>
+                    <label class="move-option cross-group-option">
+                        <input type="radio" name="MovePermissionOption" value="removeUnavailable" />
+                        <span>Remove unavailable role permissions</span>
+                    </label>
+                    <label class="move-option cross-group-option">
+                        <input type="radio" name="MovePermissionOption" value="merge" />
+                        <span>Merge permissions</span>
+                    </label>
+                </div>
+
+                <div id="moveAnalysisPanel" class="move-analysis">
+                    <div class="move-empty">Permission preview will appear here.</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="move-actions">
+            <button type="button" id="btnCancelMove" class="k-button k-button-solid-base">Cancel</button>
+            <button type="button" id="btnConfirmMove" class="k-button k-button-solid-primary" disabled>
+                Move
+            </button>
+        </div>
+    </div>
+</div>
+
+
+@Html.AntiForgeryToken()
 @section Scripts
 {
 <script>
 var currentGroupId = null;
 var currentFolderId = null;
 var currentFolderName = null;
+var currentFolderPath = "/";
 var activeActionId = null;
+var activeActionType = null;
 var treeviewWidget = null;
 var actionsPopup = null;
+let folderWindow;
+var fileWindow = null;
+var uploadWindow = null;
+var moveWindow = null;
+var pendingMove = null;
+var moveAnalysis = null;
+var moveAnalysisRequestId = 0;
+var isEditFolder = false;
 
 $(function () {
+    uploadWindow = $("#uploadFileWindow")
+        .kendoWindow({
 
+            title: "Upload File",
+
+            width: 650,
+
+            modal: true,
+
+            visible: false,
+
+            resizable: false,
+
+            draggable: true,
+
+            actions: ["Close"]
+
+        })
+        .data("kendoWindow");
+
+    moveWindow = $("#moveWindow")
+        .kendoWindow({
+            title: "Move Item",
+            width: 860,
+            modal: true,
+            visible: false,
+            resizable: false,
+            draggable: true,
+            actions: ["Close"]
+        })
+        .data("kendoWindow");
+
+    $("#btnCancelMove").kendoButton({ themeColor: "base" });
+    $("#btnConfirmMove").kendoButton({ themeColor: "primary" });
+
+    $("#btnCancelMove").on("click", function () {
+        moveWindow.close();
+    });
+
+    $("#btnConfirmMove").on("click", function () {
+        submitMove();
+    });
+
+    $("input[name='MovePermissionOption']").on("change", function () {
+        analyzeMovePermissions(false);
+    });
+
+        $("#UploadRoles").kendoMultiSelect({
+
+    placeholder: "Select Roles..."
+
+});
+
+$("#UploadDescription").kendoTextArea({
+
+    rows:4
+
+});
+
+    updateUploadButtonState();
+    clearGrid("Select any group or folder to view contents. Files can only be uploaded inside a folder.");
+
+$("#uploadFileForm").submit(function (e) {
+
+    e.preventDefault();
+
+    var formData = new FormData(this);
+
+    $.ajax({
+
+        url: "/workspace/upload-file",
+
+        type: "POST",
+
+        data: formData,
+
+        processData: false,
+
+        contentType: false,
+
+        success: function (result) {
+
+            if (result.success) {
+
+                uploadWindow.close();
+
+                loadFolderContents(
+                    currentGroupId,
+                    currentFolderId);
+
+            }
+            else {
+
+                kendo.alert(result.message);
+
+            }
+
+        },
+
+        error: function () {
+
+            kendo.alert("Unable to upload file.");
+
+        }
+
+    });
+
+});
+$("#testUploadForm").submit(function (e) {
+
+    e.preventDefault();
+
+    var formData = new FormData();
+
+    formData.append(
+        "file",
+        $("#testFile")[0].files[0]);
+
+    $.ajax({
+
+        url: "/workspace/test-upload",
+
+        type: "POST",
+
+        data: formData,
+
+        processData: false,
+
+        contentType: false,
+
+        success: function (res) {
+
+            console.log(res);
+
+            alert(res.message);
+
+        },
+
+        error: function (xhr) {
+
+            console.log(xhr.responseText);
+
+            alert(xhr.responseText);
+
+        }
+
+    });
+
+});
     // Splitter — content pane now gets the lion's share of the room
     $("#workspaceSplitter").kendoSplitter({
         orientation: "horizontal",
@@ -1083,7 +1580,12 @@ $(function () {
 
     $(document).on("click", ".row-actions-btn", function (e) {
         e.stopPropagation();
-        activeActionId = $(this).data("id");
+        var item = getGridItemById($(this).data("id"));
+
+        activeActionId = item ? item.id : $(this).data("id");
+        activeActionType = item && item.type === "Folder" ? "folder" : "file";
+
+        syncActionMenu(activeActionType);
         actionsPopup.setOptions({ anchor: this });
         actionsPopup.open();
     });
@@ -1091,7 +1593,24 @@ $(function () {
     $("#actionsPopup").on("click", "li[data-action]", function () {
         var action = $(this).data("action");
         actionsPopup.close();
-        handleFolderAction(action, activeActionId);
+        handleWorkspaceAction(action, activeActionId, activeActionType);
+    });
+
+    $(document).on("click", "#contentPanelTitle .content-crumb", function (e) {
+        e.preventDefault();
+
+        if (!currentGroupId) {
+            return;
+        }
+
+        var folderId = $(this).data("folderId");
+
+        if (folderId === "" || folderId == null) {
+            openRootFolderView();
+            return;
+        }
+
+        openFolderView(folderId);
     });
 
     $(document).on("click", function (e) {
@@ -1110,31 +1629,34 @@ $(function () {
         currentGroupId = $(this).data("id");
         currentFolderId = null;
         currentFolderName = null;
+        currentFolderPath = "/";
 
         setContentTitle(null);
+        updateUploadButtonState();
         loadFolderTree(currentGroupId);
         loadFolderContents(currentGroupId, null);
 
     });
 
     // Toolbar actions
-    $("#btnNewFolder").on("click", function () {
-        if (!currentGroupId) {
-            kendo.alert("Please select a group first.");
-            return;
-        }
-        promptForName("New Folder", "Folder name", function (name) {
-            createFolder(currentGroupId, currentFolderId, name);
-        });
-    });
+    $("#btnNewFolder").click(function () {
 
-    $("#btnUpload").on("click", function () {
-        if (!currentGroupId) {
-            kendo.alert("Please select a group first.");
-            return;
-        }
-        uploadFileTo(currentFolderId);
-    });
+    openCreateFolderPopup(
+        currentFolderId,
+        currentFolderName || "Root",
+        currentFolderPath || "/"
+    );
+
+});
+
+    $("#btnUpload").click(function () {
+    openUploadWindowForFolder(
+        currentFolderId,
+        currentFolderName,
+        currentFolderPath
+    );
+
+});
 
     $("#btnRefresh").on("click", function () {
         if (currentGroupId) {
@@ -1146,16 +1668,125 @@ $(function () {
     });
 
     $("#btnNewGroup").on("click", function () {
-        promptForName("New Group", "Group name", function (name) {
-            createGroup(name);
-        });
+    openCreateGroupPopup();
+});
+var groupPopup = $("#groupActionsPopup").kendoPopup({
+
+    animation:{
+
+        open:{effects:"fade:in"},
+
+        close:{effects:"fade:out"}
+
+    }
+
+}).data("kendoPopup");
+var selectedGroupId = null;
+
+$(document).on("click",".group-action-btn",function(e){
+
+    e.stopPropagation();
+
+    selectedGroupId=$(this).data("id");
+
+    groupPopup.setOptions({
+
+        anchor:this
+
     });
 
+    groupPopup.open();
+
+});
+$("#groupActionsPopup").on("click","li",function(){
+
+    var action=$(this).data("action");
+
+    groupPopup.close();
+
+    switch(action){
+
+        case "info":
+
+            showGroupInfo(selectedGroupId);
+
+            break;
+
+        case "edit":
+
+            editGroup(selectedGroupId);
+
+            break;
+
+        case "delete":
+
+            deleteGroup(selectedGroupId);
+
+            break;
+
+    }
+
+});
+$(document).click(function(e){
+
+    if(!$(e.target).closest("#groupActionsPopup,.group-action-btn").length){
+
+        groupPopup.close();
+
+    }
+
+});
+
+
+$("#createFolderForm").submit(function(e){
+
+    e.preventDefault();
+
+    $.ajax({
+
+        url: isEditFolder
+        ? "/workspace/update-folder"
+        : "/workspace/create-folder",
+
+        type:"POST",
+
+        data:$(this).serialize(),
+
+        success:function(result){
+
+            if(result.success){
+
+                folderWindow.close();
+
+                loadFolderTree(currentGroupId);
+
+                loadFolderContents(currentGroupId,currentFolderId);
+
+            }
+            else{
+
+                kendo.alert(result.message);
+
+            }
+
+        },
+
+        error:function(){
+
+            kendo.alert("Unable to create folder.");
+
+        }
+
+    });
+
+});
 });
 
 /*==========================
     Helpers
 ==========================*/
+
+
 
 function promptForName(title, label, onConfirm) {
     var win = $("<div/>").kendoWindow({
@@ -1196,10 +1827,64 @@ function promptForName(title, label, onConfirm) {
 
 function setContentTitle(name) {
     var $title = $("#contentPanelTitle");
-    if (name) {
-        $title.html('<span class="k-icon k-font-icon k-i-grid-layout"></span> Folder Contents &nbsp;/&nbsp; <span class="crumb-name">' + name + '</span>');
-    } else {
-        $title.html('<span class="k-icon k-font-icon k-i-grid-layout"></span> Folder Contents');
+
+    var parts = [
+        '<span class="k-icon k-font-icon k-i-grid-layout"></span>',
+        '<a href="#" class="content-crumb" data-folder-id="">Folder Contents</a>'
+    ];
+
+    getContentBreadcrumbs().forEach(function (crumb) {
+        parts.push('&nbsp;/&nbsp;');
+        parts.push(
+            '<a href="#" class="content-crumb" data-folder-id="' + crumb.id + '">' +
+            kendo.htmlEncode(crumb.name) +
+            '</a>'
+        );
+    });
+
+    $title.html(parts.join(" "));
+}
+
+function getContentBreadcrumbs() {
+    if (!currentFolderId) {
+        return [];
+    }
+
+    var crumbs = [];
+    var node = findTreeNode(currentFolderId);
+
+    if (node && treeviewWidget) {
+        var currentNode = treeviewWidget.dataItem(node);
+
+        while (currentNode) {
+            crumbs.unshift({
+                id: currentNode.id,
+                name: currentNode.text
+            });
+            currentNode = currentNode.parentNode();
+        }
+
+        return crumbs;
+    }
+
+    var pathParts = (currentFolderPath || "/")
+        .split("/")
+        .filter(function (part) { return !!part; });
+
+    return pathParts.map(function (part, index) {
+        return {
+            id: index === pathParts.length - 1 ? currentFolderId : "",
+            name: part
+        };
+    });
+}
+
+function updateUploadButtonState() {
+    var uploadButton = $("#btnUpload").data("kendoButton");
+    var canUploadToCurrentSelection = !!currentGroupId && !!currentFolderId;
+
+    if (uploadButton) {
+        uploadButton.enable(canUploadToCurrentSelection);
     }
 }
 
@@ -1279,6 +1964,8 @@ function activateTreeNode(treeView, node) {
 
     currentFolderId = dataItem.id;
     currentFolderName = dataItem.text;
+    currentFolderPath = buildFolderPathFromTree(dataItem);
+    updateUploadButtonState();
 
     if (nodeHasChildren(dataItem)) {
         treeView.expand(node);
@@ -1302,12 +1989,12 @@ $("#folderTree").empty();
 
     data.forEach(function (item) {
         lookup[item.id] = {
-            id: item.id,
-            text: item.text,
-            childCount: item.childCount || 0,
-            expanded: false,
-            items: []
-        };
+    id: item.id,
+    text: item.text,
+    hasChildren: item.hasChildren,
+    expanded: false,
+    items: []
+};
     });
 
     data.forEach(function (item) {
@@ -1337,10 +2024,7 @@ $("#folderTree").empty();
 
     template:
         '<span class="node-icon k-icon k-font-icon k-i-folder"></span>' +
-        '<span>#: item.text #</span>' +
-        '# if (item.items && item.items.length) { #' +
-            '<span class="node-count">#: item.items.length #</span>' +
-        '# } #',
+        '<span>#: item.text #</span>',
 
     select: function (e) {
 
@@ -1349,19 +2033,7 @@ $("#folderTree").empty();
     if (!dataItem)
         return;
 
-    currentFolderId = dataItem.id;
-    currentFolderName = dataItem.text;
-
-    // Expand if collapsed
-    if (dataItem.hasChildren && !$(e.node).hasClass("k-expanded")) {
-        this.expand(e.node);
-    }
-
-    // Update breadcrumb
-    setContentTitle(currentFolderName);
-
-    // Load contents
-    loadFolderContents(currentGroupId, currentFolderId);
+    activateTreeNode(this, e.node);
 
 }
 
@@ -1396,8 +2068,13 @@ function buildFolderGrid(data) {
 
     // Show empty state if there is no data
     if (!data || data.length === 0) {
-
-        clearGrid("This folder is empty. Upload a file or create a sub-folder to get started.");
+        if (!currentGroupId) {
+            clearGrid("Select any group or folder to view contents. Files can only be uploaded inside a folder.");
+        } else if (!currentFolderId) {
+            clearGrid("Select any folder to view its contents. Files cannot be uploaded at root level.");
+        } else {
+            clearGrid("This folder is empty. Upload a file or create a sub-folder to get started.");
+        }
 
         return;
     }
@@ -1413,6 +2090,8 @@ function buildFolderGrid(data) {
         height: "100%",
 
         scrollable: true,
+
+        resizable:true,
 
         sortable: true,
 
@@ -1430,8 +2109,12 @@ change: function () {
         if (!item)
             return;
 
-        currentFolderId = item.id;
-        currentFolderName = item.name;
+        if (item.type === "Folder") {
+            currentFolderId = item.id;
+            currentFolderName = item.name;
+            currentFolderPath = item.path || "/";
+            updateUploadButtonState();
+        }
 
     },
 
@@ -1440,7 +2123,7 @@ change: function () {
             {
                 field: "name",
                 title: "Name",
-                width: 280,
+                width: 400,
                 template: function (item) {
 
                     return `
@@ -1455,7 +2138,7 @@ change: function () {
             {
                 field: "type",
                 title: "Type",
-                width: 140,
+                width: 180,
                 template: function (item) {
                     var type = (item.type || "").toLowerCase();
                     var cssClass = type === "folder" ? "folder" : "file";
@@ -1466,12 +2149,35 @@ change: function () {
             {
                 field: "path",
                 title: "Path",
-                width: 360,
+                width: 450,
                 template: function (item) {
                     return `<span class="row-path">${item.path || "-"}</span>`;
                 }
             },
+{
+    field: "sizeDisplay",
+    title: "Size",
+    width: 120
+},
+{
+    field: "createdBy",
+    title: "Created By",
+    width: 180
+},
+{
+    field: "createdAt",
+    title: "Created At",
+    width: 180,
+    template: function(item) {
 
+        var date = kendo.parseDate(item.createdAt);
+
+        return date
+            ? kendo.toString(date, "dd MMM yyyy hh:mm tt")
+            : "-";
+
+    }
+},
             {
                 title: "Actions",
                 width: 90,
@@ -1495,14 +2201,11 @@ grid.tbody.off("dblclick.workspace").on("dblclick.workspace", "tr", function () 
     if (!item || item.type !== "Folder")
         return;
 
-    currentFolderId = item.id;
-    currentFolderName = item.name;
-
-    setContentTitle(currentFolderName);
-
-    expandFolderInTree(item.id);
-
-    loadFolderContents(currentGroupId, item.id);
+    openFolderView(
+        item.id,
+        item.name,
+        item.path || "/"
+    );
     });
 }
 
@@ -1510,63 +2213,560 @@ grid.tbody.off("dblclick.workspace").on("dblclick.workspace", "tr", function () 
     Folder / file actions
 ==========================*/
 
-function handleFolderAction(action, id) {
+function syncActionMenu(itemType) {
+    var normalizedType = itemType === "folder" ? "folder" : "file";
+    var menuItems = $("#actionsPopup li");
+
+    menuItems.hide();
+    menuItems.filter('[data-type="' + normalizedType + '"]').show();
+
+    $("#actionsPopup .menu-divider:visible").each(function () {
+        var hasVisibleBefore = $(this).prevAll("li:visible:not(.menu-divider)").first().length > 0;
+        var hasVisibleAfter = $(this).nextAll("li:visible:not(.menu-divider)").first().length > 0;
+
+        $(this).toggle(hasVisibleBefore && hasVisibleAfter);
+    });
+}
+
+function openRootFolderView() {
+    currentFolderId = null;
+    currentFolderName = null;
+    currentFolderPath = "/";
+    updateUploadButtonState();
+    setContentTitle(null);
+
+    if (treeviewWidget) {
+        treeviewWidget.select($());
+    }
+
+    $("#folderTree .k-selected").removeClass("k-selected");
+    loadFolderContents(currentGroupId, null);
+}
+
+function openFolderView(folderId, folderName, folderPath) {
+    if (!folderId) {
+        openRootFolderView();
+        return;
+    }
+
+    var node = findTreeNode(folderId);
+
+    if (node && treeviewWidget) {
+        activateTreeNode(treeviewWidget, node);
+        return;
+    }
+
+    currentFolderId = folderId;
+    currentFolderName = folderName || null;
+    currentFolderPath = folderPath || "/";
+    updateUploadButtonState();
+    setContentTitle(currentFolderName);
+    loadFolderContents(currentGroupId, currentFolderId);
+}
+
+function openUploadWindowForFolder(folderId, folderName, folderPath) {
+    if (!currentGroupId) {
+        showErrorToast("Please select a group.");
+        return;
+    }
+
+    if (!folderId) {
+        showErrorToast("Please select a folder first. Files cannot be uploaded at root level.");
+        return;
+    }
+
+    currentFolderId = folderId;
+    currentFolderName = folderName || currentFolderName;
+    currentFolderPath = folderPath || currentFolderPath || "/";
+
+    $("#UploadGroupId").val(currentGroupId);
+    $("#UploadFolderId").val(currentFolderId);
+    $("#UploadFolderName").val(currentFolderName);
+    $("#UploadFolderPath").val(currentFolderPath);
+    $("#UploadDescription").val("");
+    $("#UploadFile").val("");
+
+    var roleMultiSelect = $("#UploadRoles").data("kendoMultiSelect");
+    if (roleMultiSelect) {
+        roleMultiSelect.value([]);
+    }
+
+    updateUploadButtonState();
+    uploadWindow.center().open();
+}
+
+function getGridItemById(id) {
+    var grid = $("#contentGrid").data("kendoGrid");
+
+    if (!grid) {
+        return null;
+    }
+
+    return grid.dataSource.data().find(function (entry) {
+        return entry.id == id;
+    }) || null;
+}
+
+function handleWorkspaceAction(action, id, itemType) {
+    var normalizedType = itemType === "folder" ? "folder" : "file";
+    var item = getGridItemById(id);
+
+    if (!item) {
+        kendo.alert(normalizedType === "folder" ? "Folder not found." : "File not found.");
+        return;
+    }
 
     switch (action) {
-
         case "addChild":
-            promptForName("Create Child Folder", "Folder name", function (name) {
-                createFolder(currentGroupId, id, name);
-            });
+            if (normalizedType !== "folder") {
+                return;
+            }
+
+            openCreateFolderPopup(
+                item.id,
+                item.name,
+                item.path
+            );
             break;
 
         case "upload":
-            uploadFileTo(id);
+            uploadFileTo(
+                item.id,
+                item.name,
+                item.path
+            );
+            break;
+
+        case "preview":
+            kendo.alert("File preview will be added here.");
             break;
 
         case "rename":
-            promptForName("Rename Folder", "New name", function (name) {
-                renameFolder(id, name);
-            });
+            if (normalizedType === "folder") {
+                editFolder(id);
+                return;
+            }
+
+            editFile(id);
             break;
 
         case "move":
-            kendo.alert("Choose a destination folder in the tree, then confirm the move. (Hook up a folder picker here.)");
+            openMoveDialog(id, normalizedType, item);
             break;
 
         case "copy":
-            kendo.alert("Choose a destination folder to copy into. (Hook up a folder picker here.)");
+            kendo.alert(normalizedType === "folder"
+                ? "Copy Folder will be added here."
+                : "Copy File will be added here.");
             break;
 
         case "download":
             window.location.href = "/workspace/download/" + id;
             break;
 
+        case "versions":
+            kendo.alert("Version History will be added here.");
+            break;
+
         case "share":
-            kendo.alert("Sharing & permissions dialog goes here.");
+            kendo.alert("Share / Permissions will be added here.");
+            break;
+
+        case "favorite":
+            kendo.alert("Add to Favorites will be added here.");
             break;
 
         case "details":
-            kendo.alert("Folder properties (owner, created date, size) go here.");
-            break;
+
+    if (normalizedType === "folder") {
+
+        showFolderInfo(id);
+
+    }
+    else {
+
+        showFileInfo(id);
+
+    }
+
+    break;
 
         case "trash":
             kendo.confirm("Move this item to Trash?").then(function () {
-                trashFolder(id);
+                if (normalizedType === "folder") {
+                    moveToTrash("folder", id);
+                    return;
+                }
+
+                moveToTrash("file", id);
             });
             break;
     }
 }
 
-function createGroup(name) {
+function openMoveDialog(id, itemType, item) {
+    pendingMove = {
+        itemType: itemType,
+        itemId: id,
+        itemName: item && item.name ? item.name : "item",
+        destinationGroupId: null,
+        destinationFolderId: null
+    };
+    moveAnalysis = null;
+
+    $("#moveSelectionSummary").text("Loading destinations...");
+    $("#moveAnalysisPanel").html("<div class='move-empty'>Choose a destination to preview permissions.</div>");
+    setMoveButtonEnabled(false);
+    $("input[name='MovePermissionOption'][value='keep']").prop("checked", true);
+    $(".cross-group-option").hide();
+    $(".same-group-option").show();
+
+    var existingTree = $("#moveDestinationTree").data("kendoTreeView");
+    if (existingTree) {
+        existingTree.destroy();
+    }
+
+    $("#moveDestinationTree").empty();
+    moveWindow.title(itemType === "folder" ? "Move Folder" : "Move File");
+    moveWindow.center().open();
+
     $.ajax({
-        url: "/workspace/groups",
-        type: "POST",
-        data: { groupName: name },
-        success: function () { location.reload(); },
-        error: function () { alert("Unable to create group."); }
+        url: "/workspace/move-destinations",
+        type: "GET",
+        data: {
+            itemType: itemType,
+            itemId: id
+        },
+        success: function (nodes) {
+            buildMoveDestinationTree(normalizeMoveNodes(nodes));
+            $("#moveSelectionSummary").text("Select a destination for " + pendingMove.itemName + ".");
+        },
+        error: function () {
+            $("#moveSelectionSummary").text("Unable to load move destinations.");
+            kendo.alert("Unable to load move destinations.");
+        }
     });
 }
+
+function normalizeMoveNodes(nodes) {
+    return (nodes || []).map(function (node) {
+        return {
+            id: node.id ?? node.Id,
+            text: node.text ?? node.Text,
+            type: node.type ?? node.Type,
+            groupId: node.groupId ?? node.GroupId,
+            folderId: node.folderId ?? node.FolderId,
+            expanded: node.expanded ?? node.Expanded,
+            enabled: node.enabled ?? node.Enabled,
+            items: normalizeMoveNodes(node.items ?? node.Items)
+        };
+    });
+}
+
+function buildMoveDestinationTree(nodes) {
+    $("#moveDestinationTree").kendoTreeView({
+        dataSource: new kendo.data.HierarchicalDataSource({
+            data: nodes,
+            schema: {
+                model: {
+                    id: "id",
+                    children: "items"
+                }
+            }
+        }),
+        dataTextField: "text",
+        template: function (item) {
+            var data = item.item || item;
+            var icon = data.type === "group" ? "k-i-folder-open" : "k-i-folder";
+            var disabledClass = data.enabled === false ? " move-node-disabled" : "";
+            var typeClass = data.type === "group" ? "group" : "folder";
+
+            return "<span class='move-tree-node " + typeClass + disabledClass + "'>" +
+                "<span class='k-icon k-font-icon " + icon + "'></span> " +
+                kendo.htmlEncode(data.text || "-") +
+                "</span>";
+        },
+        select: function (e) {
+            var dataItem = this.dataItem(e.node);
+
+            if (!dataItem || dataItem.enabled === false) {
+                e.preventDefault();
+                return;
+            }
+
+            if (pendingMove.itemType === "file" && dataItem.type === "group") {
+                e.preventDefault();
+                kendo.alert("Files must be moved into a folder.");
+                return;
+            }
+
+            pendingMove.destinationGroupId = dataItem.groupId;
+            pendingMove.destinationFolderId = dataItem.folderId || null;
+
+            $("#moveSelectionSummary").text(
+                "Destination: " + dataItem.text +
+                (dataItem.type === "group" ? " root" : ""));
+
+            analyzeMovePermissions(false);
+        }
+    });
+}
+
+function analyzeMovePermissions(autoAdjusted) {
+    if (!pendingMove ||
+        !pendingMove.destinationGroupId ||
+        (pendingMove.itemType === "file" && !pendingMove.destinationFolderId)) {
+        setMoveButtonEnabled(false);
+        return;
+    }
+
+    var requestId = ++moveAnalysisRequestId;
+    setMoveButtonEnabled(false);
+    $("#moveAnalysisPanel").html("<div class='move-empty'>Analyzing permissions...</div>");
+
+    $.ajax({
+        url: "/workspace/analyze-move",
+        type: "POST",
+        data: buildMovePayload(),
+        success: function (analysis) {
+            if (requestId !== moveAnalysisRequestId) {
+                return;
+            }
+
+            moveAnalysis = normalizeMoveAnalysis(analysis);
+
+            if (!moveAnalysis.success) {
+                $("#moveAnalysisPanel").html(
+                    "<div class='move-empty'>" + kendo.htmlEncode(moveAnalysis.message || "Unable to analyze move.") + "</div>");
+                return;
+            }
+
+            var reanalyzing = configureMovePermissionOptions(moveAnalysis, autoAdjusted);
+            if (reanalyzing) {
+                return;
+            }
+
+            renderMoveAnalysis(moveAnalysis);
+            setMoveButtonEnabled(true);
+        },
+        error: function () {
+            if (requestId !== moveAnalysisRequestId) {
+                return;
+            }
+
+            $("#moveAnalysisPanel").html("<div class='move-empty'>Unable to analyze move permissions.</div>");
+            setMoveButtonEnabled(false);
+        }
+    });
+}
+
+function configureMovePermissionOptions(analysis, autoAdjusted) {
+    if (analysis.isCrossGroup) {
+        $(".same-group-option").hide();
+        $(".cross-group-option").show();
+
+        if ($("input[name='MovePermissionOption']:checked").val() === "keep") {
+            $("input[name='MovePermissionOption'][value='removeUnavailable']").prop("checked", true);
+
+            if (!autoAdjusted) {
+                analyzeMovePermissions(true);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    $(".cross-group-option").hide();
+    $(".same-group-option").show();
+
+    var selected = $("input[name='MovePermissionOption']:checked").val();
+    if (selected !== "keep" && selected !== "inherit") {
+        $("input[name='MovePermissionOption'][value='keep']").prop("checked", true);
+
+        if (!autoAdjusted) {
+            analyzeMovePermissions(true);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function normalizeMoveAnalysis(analysis) {
+    return {
+        success: analysis.success ?? analysis.Success,
+        message: analysis.message ?? analysis.Message,
+        isCrossGroup: analysis.isCrossGroup ?? analysis.IsCrossGroup,
+        itemName: analysis.itemName ?? analysis.ItemName,
+        sourcePath: analysis.sourcePath ?? analysis.SourcePath,
+        destinationPath: analysis.destinationPath ?? analysis.DestinationPath,
+        foldersAffected: analysis.foldersAffected ?? analysis.FoldersAffected ?? 0,
+        filesAffected: analysis.filesAffected ?? analysis.FilesAffected ?? 0,
+        currentRoles: normalizeRoles(analysis.currentRoles ?? analysis.CurrentRoles),
+        destinationRoles: normalizeRoles(analysis.destinationRoles ?? analysis.DestinationRoles),
+        missingRoles: normalizeRoles(analysis.missingRoles ?? analysis.MissingRoles),
+        afterMoveRoles: normalizeRoles(analysis.afterMoveRoles ?? analysis.AfterMoveRoles)
+    };
+}
+
+function normalizeRoles(roles) {
+    return (roles || []).map(function (role) {
+        return {
+            roleId: role.roleId ?? role.RoleId,
+            roleName: role.roleName ?? role.RoleName
+        };
+    });
+}
+
+function renderMoveAnalysis(analysis) {
+    var optionText = getSelectedMovePermissionText();
+    var currentTitle = pendingMove.itemType === "file"
+        ? "Current file roles"
+        : "Current folder roles";
+    var destinationTitle = pendingMove.destinationFolderId
+        ? "Destination folder roles"
+        : "Destination group roles";
+    var afterTitle = "Roles that will apply after move";
+    var missingBlock = analysis.missingRoles.length
+        ? "<div class='move-role-list'><strong>Unavailable roles</strong>" + renderRolePills(analysis.missingRoles, true) + "</div>"
+        : "<div class='move-role-list'><strong>Unavailable roles</strong><span class='move-empty'>None</span></div>";
+
+    $("#moveAnalysisPanel").html(`
+        <div class="move-option-note">Permission option: ${kendo.htmlEncode(optionText)}</div>
+        <div><strong>${kendo.htmlEncode(analysis.itemName || pendingMove.itemName)}</strong></div>
+        <div class="move-stats">
+            <span>Source: ${kendo.htmlEncode(analysis.sourcePath || "-")}</span>
+            <span>Destination: ${kendo.htmlEncode(analysis.destinationPath || "-")}</span>
+            <span>Folders affected: ${analysis.foldersAffected}</span>
+            <span>Files affected: ${analysis.filesAffected}</span>
+        </div>
+        <div class="move-analysis-grid">
+            <div class="move-role-list">
+                <strong>${currentTitle}</strong>
+                ${renderRolePills(analysis.currentRoles, false)}
+            </div>
+            <div class="move-role-list">
+                <strong>${destinationTitle}</strong>
+                ${renderRolePills(analysis.destinationRoles, false)}
+            </div>
+            <div class="move-role-list">
+                <strong>${afterTitle}</strong>
+                ${renderRolePills(analysis.afterMoveRoles, false)}
+            </div>
+        </div>
+        ${missingBlock}
+    `);
+}
+
+function getSelectedMovePermissionText() {
+    var value = $("input[name='MovePermissionOption']:checked").val();
+
+    if (value === "keep") {
+        return "Keep existing permissions";
+    }
+
+    if (value === "inherit") {
+        return "Inherit destination permissions";
+    }
+
+    if (value === "merge") {
+        return "Merge existing valid permissions with destination permissions";
+    }
+
+    return "Remove unavailable role permissions";
+}
+
+function renderRolePills(roles, removed) {
+    if (!roles || roles.length === 0) {
+        return "<span class='move-empty'>None</span>";
+    }
+
+    return roles.map(function (role) {
+        var marker = removed ? "x " : "+ ";
+        var cssClass = removed ? " removed" : "";
+        return "<span class='move-role-pill" + cssClass + "'>" +
+            marker + kendo.htmlEncode(role.roleName || "-") +
+            "</span>";
+    }).join("");
+}
+
+function buildMovePayload() {
+    return {
+        ItemType: pendingMove.itemType,
+        ItemId: pendingMove.itemId,
+        DestinationGroupId: pendingMove.destinationGroupId,
+        DestinationFolderId: pendingMove.destinationFolderId,
+        PermissionOption: $("input[name='MovePermissionOption']:checked").val(),
+        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+    };
+}
+
+function submitMove() {
+    if (!pendingMove || !moveAnalysis || !moveAnalysis.success) {
+        kendo.alert("Please select a valid destination first.");
+        return;
+    }
+
+    setMoveButtonEnabled(false);
+
+    $.ajax({
+        url: "/workspace/move",
+        type: "POST",
+        data: buildMovePayload(),
+        success: function (result) {
+            if (result.success) {
+                moveWindow.close();
+                loadFolderTree(currentGroupId);
+                loadFolderContents(currentGroupId, currentFolderId);
+                return;
+            }
+
+            kendo.alert(result.message || "Unable to move item.");
+            setMoveButtonEnabled(true);
+        },
+        error: function () {
+            kendo.alert("Unable to move item.");
+            setMoveButtonEnabled(true);
+        }
+    });
+}
+
+function setMoveButtonEnabled(enabled) {
+    var button = $("#btnConfirmMove").data("kendoButton");
+
+    if (button) {
+        button.enable(enabled);
+        return;
+    }
+
+    $("#btnConfirmMove").prop("disabled", !enabled);
+}
+@* 
+function createGroup(name) {
+    $.ajax({
+    url: "/workspace/create-group",
+    type: "POST",
+    data: formData,
+    headers: {
+        RequestVerificationToken:
+            $('input[name="__RequestVerificationToken"]').val()
+    },
+    success: function (result) {
+
+        if(result.success){
+
+            loadGroups();
+
+        }else{
+
+            kendo.alert(result.message);
+
+        }
+
+    }
+});
+} *@
 
 function createFolder(groupId, parentId, name) {
     $.ajax({
@@ -1581,67 +2781,246 @@ function createFolder(groupId, parentId, name) {
     });
 }
 
-function renameFolder(id, name) {
+function editFolder(folderId){
+    if (!folderWindow) {
+
+    folderWindow = $("#folderWindow")
+        .kendoWindow({
+
+            title: "Update Folder",
+
+            width: 650,
+
+            modal: true,
+
+            visible: false,
+
+            resizable: false,
+
+            draggable: true,
+
+            actions: ["Close"]
+
+        })
+        .data("kendoWindow");
+}
+    $.get("/workspace/folder/" + folderId,function(folder){
+
+        isEditFolder = true;
+
+        $("#folderPermissionPropagationSection").show();
+
+        $("#SyncParents").prop("checked", true);
+        $("#ApplyToChildren").prop("checked", true);
+        $("#ApplyToFiles").prop("checked", true);
+        $("#SyncGroup").prop("checked", true);
+
+        $("#FolderId").val(folder.folderId);
+console.log("FolderId:", $("#FolderId").val());
+        $("#FolderGroupId").val(currentGroupId);
+
+        $("#ParentFolderId").val(folder.parentFolderId);
+
+        $("#ParentFolderName").val(folder.parentFolder);
+
+        $("#ParentFolderPath").val(folder.path);
+if (!$("#FolderName").data("kendoTextBox")) {
+    $("#FolderName").kendoTextBox();
+}
+
+if (!$("#FolderDescription").data("kendoTextArea")) {
+    $("#FolderDescription").kendoTextArea({
+        rows: 4
+    });
+}
+
+if (!$("#FolderRoles").data("kendoMultiSelect")) {
+    $("#FolderRoles").kendoMultiSelect({
+        placeholder: "Select Roles..."
+    });
+}
+        $("#FolderName").data("kendoTextBox").value(folder.folderName);
+
+        $("#FolderDescription")
+            .data("kendoTextArea")
+            .value(folder.description);
+
+        $("#FolderRoles")
+            .data("kendoMultiSelect")
+            .value(folder.selectedRoleIds);
+
+        folderWindow.title("Update Folder");
+
+        $("#btnSaveFolder").text("Update Folder");
+
+        folderWindow.center().open();
+
+    });
+
+}
+
+function editFile(fileId) {
+    $.get("/workspace/file/" + fileId, function (file) {
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        if (!fileWindow) {
+            fileWindow = $("<div/>").kendoWindow({
+                title: "Update File",
+                width: 620,
+                modal: true,
+                resizable: false,
+                visible: false,
+                close: function () {
+                    this.content("");
+                }
+            }).data("kendoWindow");
+        }
+
+        var html = `
+            <form id="updateFileForm">
+                <input type="hidden"
+                       name="__RequestVerificationToken"
+                       value="${token}" />
+
+                <input type="hidden"
+                       name="FileId"
+                       value="${file.fileId}" />
+
+                <input type="hidden"
+                       name="Extension"
+                       value="${file.extension || ""}" />
+
+                <div style="display:flex;flex-direction:column;gap:15px;padding:15px;">
+                    <div>
+                        <label>File Name</label>
+                        <input id="EditFileName"
+                               name="FileName"
+                               value="${kendo.htmlEncode(file.fileName || "")}"
+                               style="width:100%;" />
+                    </div>
+
+                    <div>
+                        <label>Description</label>
+                        <textarea id="EditFileDescription"
+                                  name="Description"
+                                  style="width:100%;height:90px;">${kendo.htmlEncode(file.description || "")}</textarea>
+                    </div>
+
+                    <div>
+                        <label>Roles</label>
+                        <select id="EditFileRoles"
+                                name="SelectedRoleIds"
+                                multiple>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role.RoleId">
+                                    @role.RoleName
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:10px;">
+                        <button type="button"
+                                id="btnCancelFileUpdate"
+                                class="k-button">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="k-button k-button-solid-primary">
+                            Update File
+                        </button>
+                    </div>
+                </div>
+            </form>
+        `;
+
+        fileWindow.content(html);
+        fileWindow.center().open();
+
+        $("#EditFileName").kendoTextBox();
+
+        $("#EditFileDescription").kendoTextArea({
+            rows: 4
+        });
+
+        var roleMultiSelect = $("#EditFileRoles").kendoMultiSelect({
+            placeholder: "Select Roles..."
+        }).data("kendoMultiSelect");
+
+        roleMultiSelect.value(file.selectedRoleIds || []);
+
+        $("#btnCancelFileUpdate").click(function () {
+            fileWindow.close();
+        });
+
+        $("#updateFileForm").submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "/workspace/update-file",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function (result) {
+                    if (result.success) {
+                        fileWindow.close();
+
+                        loadFolderTree(currentGroupId);
+                        loadFolderContents(currentGroupId, currentFolderId);
+                    }
+                    else {
+                        kendo.alert(result.message);
+                    }
+                },
+                error: function () {
+                    kendo.alert("Unable to update file.");
+                }
+            });
+        });
+    });
+}
+
+function moveToTrash(type, id) {
     $.ajax({
-        url: "/workspace/folders/rename",
+        url: "/recycle-bin/delete",
         type: "POST",
-        data: { id: id, name: name },
-        success: function () {
-            loadFolderTree(currentGroupId);
-            loadFolderContents(currentGroupId, currentFolderId);
+        data: {
+            type: type,
+            id: id,
+            __RequestVerificationToken:
+                $('input[name="__RequestVerificationToken"]').val()
         },
-        error: function () { alert("Unable to rename folder."); }
+        success: function (result) {
+            if (result.success) {
+                if (type === "group") {
+                    location.reload();
+                    return;
+                }
+
+                loadFolderTree(currentGroupId);
+                loadFolderContents(currentGroupId, currentFolderId);
+                return;
+            }
+
+            kendo.alert(result.message);
+        },
+        error: function () {
+            kendo.alert("Unable to move item to trash.");
+        }
     });
 }
 
 function trashFolder(id) {
-    $.ajax({
-        url: "/workspace/folders/trash",
-        type: "POST",
-        data: { id: id },
-        success: function () {
-            loadFolderTree(currentGroupId);
-            loadFolderContents(currentGroupId, currentFolderId);
-        },
-        error: function () { alert("Unable to move folder to trash."); }
-    });
+    moveToTrash("folder", id);
 }
 
-function uploadFileTo(folderId) {
-    var $input = $('<input type="file" style="display:none" multiple />').appendTo("body");
-    $input.on("change", function () {
-        var files = this.files;
-        if (!files.length) { return; }
-
-        var formData = new FormData();
-        formData.append("groupId", currentGroupId);
-        formData.append("folderId", folderId);
-        for (var i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
-        }
-
-        kendo.ui.progress($("#contentGrid"), true);
-
-        $.ajax({
-            url: "/workspace/upload",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function () {
-                loadFolderContents(currentGroupId, currentFolderId);
-            },
-            error: function () {
-                alert("Unable to upload file(s).");
-            },
-            complete: function () {
-                kendo.ui.progress($("#contentGrid"), false);
-                $input.remove();
-            }
-        });
-    });
-
-    $input.trigger("click");
+function uploadFileTo(folderId, folderName, folderPath) {
+    openUploadWindowForFolder(
+        folderId,
+        folderName,
+        folderPath
+    );
 }
 function expandFolderInTree(folderId) {
 
@@ -1695,5 +3074,1258 @@ function findTreeNode(folderId) {
     return result;
 
 }
+function buildFolderPathFromTree(dataItem) {
+
+    if (!dataItem) {
+        return "/";
+    }
+
+    var names = [];
+    var currentNode = dataItem;
+
+    while (currentNode) {
+        names.unshift(currentNode.text);
+        currentNode = currentNode.parentNode();
+    }
+
+    return names.length ? "/" + names.join("/") : "/";
+}
+function openCreateGroupPopup() {
+
+    var token = $('input[name="__RequestVerificationToken"]').val();
+
+    var win = $("<div/>").kendoWindow({
+        title: "Create New Group",
+        width: 520,
+        modal: true,
+        resizable: false,
+        visible: false,
+        close: function () {
+            this.destroy();
+        }
+    }).data("kendoWindow");
+
+    var html = `
+        <form id="createGroupForm">
+
+            <input type="hidden"
+                   name="__RequestVerificationToken"
+                   value="${token}" />
+
+            <div style="display:flex;flex-direction:column;gap:15px;padding:15px;">
+
+                <div>
+                    <label>Group Name</label>
+                    <input id="txtGroupName"
+                           name="GroupName"
+                           style="width:100%;" />
+                </div>
+
+                <div>
+                    <label>Description</label>
+                    <textarea id="txtDescription"
+                              name="Description"
+                              style="width:100%;height:90px;"></textarea>
+                </div>
+
+                <div>
+                    <label>Roles</label>
+
+                    <select id="ddlRoles"
+                            name="SelectedRoleIds"
+                            multiple>
+
+                        @foreach (var role in Model.Roles)
+                        {
+                            <option value="@role.RoleId">
+                                @role.RoleName
+                            </option>
+                        }
+
+                    </select>
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;">
+
+                    <button type="button"
+                            id="btnCancelGroup"
+                            class="k-button">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="k-button k-button-solid-primary">
+                        Create Group
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+    `;
+
+    win.content(html);
+
+    win.center().open();
+
+    $("#txtGroupName").kendoTextBox();
+
+    $("#txtDescription").kendoTextArea({
+        rows:4
+    });
+
+    $("#ddlRoles").kendoMultiSelect({
+        placeholder:"Select Roles..."
+    });
+
+    $("#btnCancelGroup").click(function () {
+        win.close();
+    });
+
+    $("#createGroupForm").submit(function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+
+            url: "/workspace/create-group",
+
+            type: "POST",
+
+            data: $(this).serialize(),
+
+            success: function (result) {
+
+                if (result.success) {
+
+                    win.close();
+
+                    kendo.alert(result.message);
+
+                    location.reload();
+
+                }
+                else {
+
+                    kendo.alert(result.message);
+
+                }
+
+            },
+
+            error: function (xhr) {
+
+                console.log(xhr);
+
+                kendo.alert("Unable to create group.");
+
+            }
+
+        });
+
+    });
+}
+function showGroupInfo(id) {
+
+    $.get("/workspace/group/" + id, function (group) {
+
+        var rolesHtml = "";
+
+        if (group.roles && group.roles.length) {
+
+            group.roles.forEach(function (role) {
+
+                rolesHtml += `
+                    <span class="k-chip k-chip-solid k-chip-solid-base"
+                          style="margin:3px;">
+                        ${role.roleName}
+                    </span>`;
+            });
+
+        }
+        else {
+
+            rolesHtml = "<span class='text-muted'>No roles assigned</span>";
+
+        }
+
+        var updatedAt = group.updatedAt
+            ? kendo.toString(
+                kendo.parseDate(group.updatedAt),
+                "dd MMM yyyy hh:mm tt")
+            : "-";
+
+        var updatedBy = group.updatedBy || "-";
+
+        var win = $("<div/>").kendoWindow({
+
+            title: "Group Information",
+
+            width: 720,
+
+            modal: true,
+
+            visible: false,
+
+            resizable: false,
+
+            actions:["Close"],
+
+            close:function(){
+
+                this.destroy();
+
+            }
+
+        }).data("kendoWindow");
+
+        win.content(`
+
+<div style="padding:20px;">
+
+    <div class="row">
+
+        <!-- General -->
+
+        <div class="col-md-6">
+
+            <div class="k-card">
+
+                <div class="k-card-header">
+
+                    <h5>
+                        <span class="k-icon k-i-folder"></span>
+                        General
+                    </h5>
+
+                </div>
+
+                <div class="k-card-body">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+
+                            <td width="160"><b>Name</b></td>
+
+                            <td>${group.groupName}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Description</b></td>
+
+                            <td>${group.description || "-"}</td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Statistics -->
+
+        <div class="col-md-6">
+
+            <div class="k-card">
+
+                <div class="k-card-header">
+
+                    <h5>
+
+                        <span class="k-icon k-i-chart-bar"></span>
+
+                        Statistics
+
+                    </h5>
+
+                </div>
+
+                <div class="k-card-body">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+
+                            <td width="170"><b>Total Folders</b></td>
+
+                            <td>${group.folderCount}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Total Files</b></td>
+
+                            <td>${group.fileCount}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Total Size</b></td>
+
+                            <td>${group.totalSizeDisplay}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td style="vertical-align:top">
+
+                                <b>Roles</b>
+
+                            </td>
+
+                            <td>
+
+                                ${rolesHtml}
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <br/>
+
+    <!-- Audit -->
+
+    <div class="k-card">
+
+        <div class="k-card-header">
+
+            <h5>
+
+                <span class="k-icon k-i-calendar"></span>
+
+                Audit Information
+
+            </h5>
+
+        </div>
+
+        <div class="k-card-body">
+
+            <table class="table table-borderless">
+
+                <tr>
+
+                    <td width="180"><b>Created By</b></td>
+
+                    <td>${group.createdBy}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><b>Created At</b></td>
+
+                    <td>${kendo.toString(
+                        kendo.parseDate(group.createdAt),
+                        "dd MMM yyyy hh:mm tt")}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><b>Updated By</b></td>
+
+                    <td>${updatedBy}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><b>Updated At</b></td>
+
+                    <td>${updatedAt}</td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+        `);
+
+        win.center().open();
+
+    });
+
+}
+
+function editGroup(id) {
+
+    $.get("/workspace/group/" + id, function (group) {
+
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        var win = $("<div/>").kendoWindow({
+            title: "Update Group",
+            width: 520,
+            modal: true,
+            resizable: false,
+            visible: false,
+            close: function () {
+                this.destroy();
+            }
+        }).data("kendoWindow");
+
+        var html = `
+            <form id="updateGroupForm">
+
+                <input type="hidden"
+                       name="__RequestVerificationToken"
+                       value="${token}" />
+
+                <input type="hidden"
+                       name="GroupId"
+                       value="${group.groupId}" />
+
+                <div style="display:flex;flex-direction:column;gap:15px;padding:15px;">
+
+                    <div>
+                        <label>Group Name</label>
+                        <input id="txtEditGroupName"
+                               name="GroupName"
+                               value="${group.groupName}"
+                               style="width:100%;" />
+                    </div>
+
+                    <div>
+                        <label>Description</label>
+                        <textarea id="txtEditDescription"
+                                  name="Description"
+                                  style="width:100%;height:90px;">${group.description ?? ""}</textarea>
+                    </div>
+
+                    <div>
+                        <label>Roles</label>
+
+                        <select id="ddlEditRoles"
+                                name="SelectedRoleIds"
+                                multiple>
+
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role.RoleId">
+                                    @role.RoleName
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:10px;">
+
+                        <button type="button"
+                                id="btnCancelUpdate"
+                                class="k-button">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="k-button k-button-solid-primary">
+                            Update Group
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+        `;
+
+        win.content(html);
+
+        win.center().open();
+
+        $("#txtEditGroupName").kendoTextBox();
+
+        $("#txtEditDescription").kendoTextArea({
+            rows: 4
+        });
+
+        var multi = $("#ddlEditRoles").kendoMultiSelect({
+            placeholder: "Select Roles..."
+        }).data("kendoMultiSelect");
+
+        if (group.roles) {
+
+            var values = group.roles.map(function (r) {
+                return r.roleId;
+            });
+
+            multi.value(values);
+        }
+
+        $("#btnCancelUpdate").click(function () {
+            win.close();
+        });
+
+        $("#updateGroupForm").submit(function (e) {
+
+            e.preventDefault();
+
+            $.ajax({
+
+                url: "/workspace/update-group",
+
+                type: "POST",
+
+                data: $(this).serialize(),
+
+                success: function (result) {
+
+                    if (result.success) {
+
+                        win.close();
+
+                        location.reload();
+
+                    }
+                    else {
+
+                        kendo.alert(result.message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    kendo.alert("Unable to update group.");
+
+                }
+
+            });
+
+        });
+
+    });
+
+}
+
+function deleteGroup(id) {
+
+    kendo.confirm("Move this group to Trash?")
+        .then(function () {
+
+            moveToTrash("group", id);
+
+        });
+
+}
+
+function openCreateFolderPopup(
+    parentFolderId = null,
+    parentFolderName = "Root",
+    parentFolderPath = "/")
+{
+    if (!currentGroupId) {
+
+        kendo.alert("Please select a group first.");
+
+        return;
+    }
+
+    if (!folderWindow) {
+
+        folderWindow = $("#folderWindow")
+            .kendoWindow({
+
+                title: "Create Folder",
+
+                width: 650,
+
+                modal: true,
+
+                visible: false,
+
+                resizable: false,
+
+                draggable: true,
+
+                actions: ["Close"]
+
+            })
+            .data("kendoWindow");
+    }
+
+    $("#createFolderForm")[0].reset();
+    isEditFolder = false;
+
+    $("#folderPermissionPropagationSection").hide();
+
+    $("#SyncParents").prop("checked", false);
+    $("#ApplyToChildren").prop("checked", false);
+    $("#ApplyToFiles").prop("checked", false);
+    $("#SyncGroup").prop("checked", false);
+
+$("#FolderId").val("");
+
+folderWindow.title("Create Folder");
+
+$("#btnSaveFolder").text("Create Folder");
+
+    $("#FolderGroupId").val(currentGroupId);
+
+    $("#ParentFolderId").val(parentFolderId);
+
+    $("#ParentFolderName").val(parentFolderName);
+
+    $("#ParentFolderPath").val(parentFolderPath);
+
+    if (!$("#FolderName").data("kendoTextBox")) {
+
+        $("#FolderName").kendoTextBox();
+
+    }
+
+    if (!$("#FolderDescription").data("kendoTextArea")) {
+
+        $("#FolderDescription").kendoTextArea({
+            rows: 4
+        });
+
+    }
+
+    if (!$("#FolderRoles").data("kendoMultiSelect")) {
+
+        $("#FolderRoles").kendoMultiSelect({
+
+            placeholder: "Select Roles..."
+
+        });
+
+    }
+
+    $("#FolderRoles")
+        .data("kendoMultiSelect")
+        .value([]);
+
+    folderWindow.center().open();
+}
+
+function showFolderInfo(folderId) {
+
+    $.get("/workspace/folder/" + folderId, function (folder) {
+
+        var rolesHtml = "";
+
+        if (folder.roles && folder.roles.length) {
+
+            folder.roles.forEach(function (role) {
+
+                rolesHtml += `
+                    <span class="k-chip k-chip-solid k-chip-solid-base"
+                          style="margin:3px;">
+                        ${role.roleName}
+                    </span>`;
+            });
+
+        }
+        else {
+
+            rolesHtml = "<span class='text-muted'>No roles assigned</span>";
+
+        }
+
+        var updatedAt = folder.updatedAt
+            ? kendo.toString(
+                kendo.parseDate(folder.updatedAt),
+                "dd MMM yyyy hh:mm tt")
+            : "-";
+
+        var updatedBy = folder.updatedBy || "-";
+
+        var win = $("<div/>").kendoWindow({
+
+            title: "Folder Information",
+
+            width: 850,
+
+            modal: true,
+
+            visible: false,
+
+            resizable: false,
+
+            actions: ["Close"],
+
+            close: function () {
+
+                this.destroy();
+
+            }
+
+        }).data("kendoWindow");
+
+        win.content(`
+
+<div style="padding:20px;">
+
+    <div class="row">
+
+        <!-- General -->
+
+        <div class="col-md-6">
+
+            <div class="k-card">
+
+                <div class="k-card-header">
+
+                    <h5>
+
+                        <span class="k-icon k-i-folder"></span>
+
+                        General
+
+                    </h5>
+
+                </div>
+
+                <div class="k-card-body">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+
+                            <td width="170"><b>Name</b></td>
+
+                            <td>${folder.folderName}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Description</b></td>
+
+                            <td>${folder.description || "-"}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Group</b></td>
+
+                            <td>${folder.groupName}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Parent Folder</b></td>
+
+                            <td>${folder.parentFolder}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Path</b></td>
+
+                            <td style="word-break:break-all;">${folder.path}</td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Statistics -->
+
+        <div class="col-md-6">
+
+            <div class="k-card">
+
+                <div class="k-card-header">
+
+                    <h5>
+
+                        <span class="k-icon k-i-chart-bar"></span>
+
+                        Statistics
+
+                    </h5>
+
+                </div>
+
+                <div class="k-card-body">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+
+                            <td width="170"><b>Folder Level</b></td>
+
+                            <td>${folder.level}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Child Folders</b></td>
+
+                            <td>${folder.childFolderCount}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Files</b></td>
+
+                            <td>${folder.fileCount}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td><b>Total Size</b></td>
+
+                            <td>${folder.totalSizeDisplay}</td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <br/>
+
+    <!-- Permissions -->
+
+    <div class="k-card">
+
+        <div class="k-card-header">
+
+            <h5>
+
+                <span class="k-icon k-i-lock"></span>
+
+                Assigned Roles
+
+            </h5>
+
+        </div>
+
+        <div class="k-card-body">
+
+            ${rolesHtml}
+
+        </div>
+
+    </div>
+
+    <br/>
+
+    <!-- Audit -->
+
+    <div class="k-card">
+
+        <div class="k-card-header">
+
+            <h5>
+
+                <span class="k-icon k-i-calendar"></span>
+
+                Audit Information
+
+            </h5>
+
+        </div>
+
+        <div class="k-card-body">
+
+            <table class="table table-borderless">
+
+                <tr>
+
+                    <td width="170"><b>Created By</b></td>
+
+                    <td>${folder.createdBy}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><b>Created At</b></td>
+
+                    <td>${kendo.toString(
+                        kendo.parseDate(folder.createdAt),
+                        "dd MMM yyyy hh:mm tt")}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><b>Updated By</b></td>
+
+                    <td>${updatedBy}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><b>Updated At</b></td>
+
+                    <td>${updatedAt}</td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+        `);
+
+        win.center().open();
+
+    });
+
+}
+function showFileInfo(fileId){
+
+    $.get("/workspace/file/" + fileId,function(file){
+
+        var rolesHtml="";
+
+        if(file.roles && file.roles.length){
+
+            file.roles.forEach(function(role){
+
+                rolesHtml += `
+                    <span class="k-chip k-chip-solid k-chip-solid-base"
+                          style="margin:3px;">
+                        ${role.roleName}
+                    </span>`;
+            });
+
+        }
+        else{
+
+            rolesHtml="<span class='text-muted'>No roles assigned</span>";
+
+        }
+
+        var updatedAt=file.updatedAt
+            ? kendo.toString(
+                kendo.parseDate(file.updatedAt),
+                "dd MMM yyyy hh:mm tt")
+            : "-";
+
+        var updatedBy=file.updatedBy||"-";
+
+        var win=$("<div/>").kendoWindow({
+
+            title:"File Information",
+
+            width:900,
+
+            modal:true,
+
+            visible:false,
+
+            resizable:false,
+
+            actions:["Close"],
+
+            close:function(){
+
+                this.destroy();
+
+            }
+
+        }).data("kendoWindow");
+
+        win.content(`
+
+<div style="padding:20px;">
+
+<div class="row">
+
+<div class="col-md-6">
+
+<div class="k-card">
+
+<div class="k-card-header">
+
+<h5>
+
+<span class="k-icon k-i-file"></span>
+
+General
+
+</h5>
+
+</div>
+
+<div class="k-card-body">
+
+<table class="table table-borderless">
+
+<tr>
+
+<td width="170"><b>Name</b></td>
+
+<td>${file.fileName}${file.extension}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Original Name</b></td>
+
+<td>${file.originalFileName}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Description</b></td>
+
+<td>${file.description || "-"}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Extension</b></td>
+
+<td>${file.extension.toUpperCase()} (${file.extension})</td>
+
+</tr>
+
+<tr>
+
+<td><b>Category</b></td>
+
+<td>${file.fileCategory || "-"}</td>
+
+</tr>
+
+<tr>
+
+<td><b>MIME Type</b></td>
+
+<td>${file.contentType || "-"}</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="k-card">
+
+<div class="k-card-header">
+
+<h5>
+
+<span class="k-icon k-i-folder"></span>
+
+Location
+
+</h5>
+
+</div>
+
+<div class="k-card-body">
+
+<table class="table table-borderless">
+
+<tr>
+
+<td width="170"><b>Group</b></td>
+
+<td>${file.groupName}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Folder</b></td>
+
+<td>${file.folderName}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Path</b></td>
+
+<td style="word-break:break-all;">
+${file.groupName}/${file.folderName}/${file.fileName}${file.extension}
+</td>
+
+</tr>
+
+<tr>
+
+<td><b>Size</b></td>
+
+<td>${file.fileSizeDisplay}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Actual Size</b></td>
+
+<td>${file.fileSize.toLocaleString()} Bytes</td>
+
+</tr>
+
+<tr>
+
+<td><b>Storage</b></td>
+
+<td>${file.storageProvider} Object Storage</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="k-card">
+
+<div class="k-card-header">
+
+<h5>
+
+<span class="k-icon k-i-lock"></span>
+
+Assigned Roles
+
+</h5>
+
+</div>
+
+<div class="k-card-body">
+
+${rolesHtml}
+
+</div>
+
+</div>
+
+<br>
+
+<div class="k-card">
+
+<div class="k-card-header">
+
+<h5>
+
+<span class="k-icon k-i-calendar"></span>
+
+Audit Information
+
+</h5>
+
+</div>
+
+<div class="k-card-body">
+
+<table class="table table-borderless">
+
+<tr>
+
+<td width="170"><b>Created By</b></td>
+
+<td>${file.createdBy}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Created At</b></td>
+
+<td>${kendo.toString(
+kendo.parseDate(file.createdAt),
+"dd MMM yyyy hh:mm tt")}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Updated By</b></td>
+
+<td>${updatedBy}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Updated At</b></td>
+
+<td>${updatedAt}</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+`);
+
+        win.center().open();
+
+    });
+
+}
+
 </script>
 }

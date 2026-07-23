@@ -13,5 +13,6 @@ namespace Repositories.Models.ViewModels.Workspace
         public long? SelectedFolderId { get; set; }
 
         public string? CurrentFolderName { get; set; }
+        public List<RoleVM> Roles { get; set; } = new();
     }
 }

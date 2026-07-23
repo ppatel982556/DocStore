@@ -27,5 +27,14 @@ namespace Repositories.Constants.Workspace.Folders
         public const string DeletedAt = "c_deleted_at";
 
         public const string IsDeleted = "c_is_deleted";
+
+        public const string DeletedRootType = "c_deleted_root_type";
+
+        public const string DeletedRootId = "c_deleted_root_id";
+
+        public const string FullPath = "c_full_path";
+        public const string Level = "c_level";
+
+        public const string HasChildren = "c_has_children";
     }
 }

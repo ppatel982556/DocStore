@@ -24,7 +24,14 @@ namespace MVC.Controllers
             ActionExecutingContext context,
             ActionExecutionDelegate next)
         {
-            if (User.Identity?.IsAuthenticated == true)
+            bool isAjaxRequest =
+                string.Equals(
+                    Request.Headers["X-Requested-With"],
+                    "XMLHttpRequest",
+                    StringComparison.OrdinalIgnoreCase);
+
+            if (!isAjaxRequest &&
+                User.Identity?.IsAuthenticated == true)
             {
                 string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

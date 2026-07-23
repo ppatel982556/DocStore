@@ -1,0 +1,153 @@
+@model Repositories.Models.ViewModels.Workspace.WorkspaceVM
+
+<form id="createFolderForm">
+
+    @Html.AntiForgeryToken()
+
+<input type="hidden"
+       id="FolderId"
+       name="FolderId" />
+
+<input type="hidden"
+       id="FolderGroupId"
+       name="GroupId" />
+
+<input type="hidden"
+       id="ParentFolderId"
+       name="ParentFolderId" />
+
+    <div class="form-group mb-3">
+
+    <label class="form-label">
+        Parent Folder
+    </label>
+
+    <input id="ParentFolderName"
+           class="k-textbox"
+           readonly />
+
+</div>
+
+<div class="form-group mb-3">
+
+    <label class="form-label">
+        Location
+    </label>
+
+    <input id="ParentFolderPath"
+           class="k-textbox"
+           readonly />
+
+</div>
+
+    <div class="form-group mb-3">
+
+        <label class="form-label">
+            Folder Name
+        </label>
+
+        <input id="FolderName"
+               name="FolderName"
+               required />
+
+    </div>
+
+    <div class="form-group mb-3">
+
+        <label class="form-label">
+            Description
+        </label>
+
+        <textarea id="FolderDescription"
+                  name="Description">
+        </textarea>
+
+    </div>
+
+    <div class="form-group mb-4">
+
+        <label class="form-label">
+            Assign Roles
+        </label>
+
+        <select id="FolderRoles"
+                name="SelectedRoleIds"
+                multiple>
+
+            @foreach (var role in Model.Roles)
+            {
+                <option value="@role.RoleId">
+                    @role.RoleName
+                </option>
+            }
+
+        </select>
+
+    </div>
+
+    <div id="folderPermissionPropagationSection"
+         class="form-group mb-4"
+         style="display:none;">
+
+        <label class="form-label d-block">
+            Update Related Permissions
+        </label>
+
+        <div class="d-flex flex-column gap-2">
+
+            <label class="d-flex align-items-center gap-2">
+                <input type="checkbox"
+                       id="SyncParents"
+                       name="PermissionOptions.SyncParents"
+                       value="true" />
+                <span>Update parent folder roles</span>
+            </label>
+
+            <label class="d-flex align-items-center gap-2">
+                <input type="checkbox"
+                       id="ApplyToChildren"
+                       name="PermissionOptions.ApplyToChildren"
+                       value="true" />
+                <span>Update child folder roles</span>
+            </label>
+
+            <label class="d-flex align-items-center gap-2">
+                <input type="checkbox"
+                       id="ApplyToFiles"
+                       name="PermissionOptions.ApplyToFiles"
+                       value="true" />
+                <span>Update files inside this folder tree</span>
+            </label>
+
+            <label class="d-flex align-items-center gap-2">
+                <input type="checkbox"
+                       id="SyncGroup"
+                       name="PermissionOptions.SyncGroup"
+                       value="true" />
+                <span>Sync group roles with the updated folder roles</span>
+            </label>
+
+        </div>
+
+    </div>
+
+    <div class="text-end">
+
+        <button type="button"
+                class="k-button"
+                onclick="folderWindow.close()">
+
+            Cancel
+
+        </button>
+
+        <button type="submit" id="btnSaveFolder"
+                class="k-button k-button-solid-primary">
+
+            Create Folder
+
+        </button>
+
+    </div>
+
+</form>
